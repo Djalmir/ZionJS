@@ -1,0 +1,69 @@
+:root {
+	--dark-bg1: #0a0a0a;
+	--dark-bg2: #242424;
+	--dark-bg3: #3f3f3f;
+	--dark-bg4: #6b6b6b;
+	--dark-font1: #ccc;
+	--dark-font2: #eee;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	border: none;
+	outline: none;
+	font-size: 16px;
+}
+
+body {
+	background: var(--dark-bg1);
+	color: var(--dark-font1);
+}
+
+section {
+	padding: 13px;
+}
+
+h1 {
+	margin: 20px;
+	font-size: 2em;
+}
+
+input {
+	color: var(--dark-font1);
+	background: var(--dark-bg3);
+	padding: 4px 8px;
+	border-radius: .3rem;
+	border: 1px solid var(--dark-bg1);
+	box-shadow: inset 0 0 4px var(--dark-bg1);
+}
+
+button {
+	color: var(--dark-font2);
+	background: var(--dark-bg4);
+	padding: 4px 8px;
+	border-radius: .3rem;
+	border-left: 1px solid var(--dark-bg3);
+	border-top: 1px solid var(--dark-bg3);
+	border-right: 1px solid var(--dark-bg1);
+	border-bottom: 1px solid var(--dark-bg1);
+	box-shadow: 0 0 2px var(--dark-bg1);
+	cursor: pointer;
+	font-weight: bold;
+	filter: brightness(.8);
+}
+
+button:hover,
+button:focus {
+	filter: brightness(1);
+}
+
+button:active {
+	filter: brightness(.6);
+	border-left: 1px solid var(--dark-bg1);
+	border-top: 1px solid var(--dark-bg1);
+	border-right: 1px solid var(--dark-bg3);
+	border-bottom: 1px solid var(--dark-bg3);
+	box-shadow: inset 0 0 2px var(--dark-bg1);
+}
