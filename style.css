@@ -39,6 +39,11 @@ input {
 	box-shadow: inset 0 0 4px var(--dark-bg1);
 }
 
+input[type='radio'],
+input[type='checkbox'] {
+	box-shadow: none;
+}
+
 button {
 	color: var(--dark-font2);
 	background: var(--dark-bg4);
