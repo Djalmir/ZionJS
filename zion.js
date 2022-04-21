@@ -1,6 +1,6 @@
 const ZION = (self) => {
 
-	const view = self.shadowRoot.firstElementChild
+	const view = self.shadowRoot
 	const watch = self['watch']
 	const zModeledKeys = []
 
@@ -66,11 +66,10 @@ const ZION = (self) => {
 
 		//Show or hide z-if elements accordingly
 		zIfElements.map((zEl) => {
-			//TODO: UPDATE THIS BLOCK!!!
-			zEl.style.display = eval(currVal) ? 'unset' : 'none'
+			zEl.style.display = eval(currVal) ? '' : 'none'
 			if (zEl.nextElementSibling) {
 				if (zEl.nextElementSibling.hasAttribute('z-else'))
-					zEl.nextElementSibling.style.display = eval(currVal) ? 'none' : 'unset'
+					zEl.nextElementSibling.style.display = eval(currVal) ? 'none' : ''
 			}
 		})
 
@@ -105,11 +104,10 @@ const ZION = (self) => {
 
 				//if element has z-if directive proccess it now				
 				zIfElements.map((zEl) => {
-					//TODO: UPDATE THIS BLOCK!!!
-					zEl.style.display = eval(currVal) ? 'unset' : 'none'
+					zEl.style.display = eval(currVal) ? '' : 'none'
 					if (zEl.nextElementSibling) {
 						if (zEl.nextElementSibling.hasAttribute('z-else'))
-							zEl.nextElementSibling.style.display = eval(currVal) ? 'none' : 'unset'
+							zEl.nextElementSibling.style.display = eval(currVal) ? 'none' : ''
 					}
 				})
 			}
@@ -155,10 +153,10 @@ const ZION = (self) => {
 			else
 				scope = self
 
-			zEl.style.display = self[zIf] ? 'unset' : 'none'
+			zEl.style.display = self[zIf] ? '' : 'none'
 			if (zEl.nextElementSibling) {
 				if (zEl.nextElementSibling.hasAttribute('z-else'))
-					zEl.nextElementSibling.style.display = self[zIf] ? 'none' : 'unset'
+					zEl.nextElementSibling.style.display = self[zIf] ? 'none' : ''
 			}
 
 			let currVal = self[zIf]
@@ -168,19 +166,48 @@ const ZION = (self) => {
 				},
 				set: (newVal) => {
 					currVal = newVal
-					zEl.style.display = newVal ? 'unset' : 'none'//TODO: UPDATE THIS LINE!!!
+					zEl.style.display = newVal ? '' : 'none'
 					if (zEl.nextElementSibling) {
 						if (zEl.nextElementSibling.hasAttribute('z-else'))
-							zEl.nextElementSibling.style.display = newVal ? 'none' : 'unset'
+							zEl.nextElementSibling.style.display = newVal ? 'none' : ''
 					}
 				}
 			})
 		}
 		else {
-			zEl.style.display = eval(zIf) ? 'unset' : 'none'//TODO: UPDATE THIS LINE!!!
-			if (zEl.nextElementSibling) {
-				if (zEl.nextElementSibling.hasAttribute('z-else'))
-					zEl.nextElementSibling.style.display = eval(zIf) ? 'none' : 'unset'
+			try {
+				zEl.style.display = eval(zIf) ? '' : 'none'
+				if (zEl.nextElementSibling) {
+					if (zEl.nextElementSibling.hasAttribute('z-else'))
+						zEl.nextElementSibling.style.display = eval(zIf) ? 'none' : ''
+				}
+			}
+			catch {
+				let arr = zIf.split('.')
+				let scope = eval(`self${ arr.length ? '.' + arr.slice(0, arr.length - 1) : '' }`)
+				zIf = arr[arr.length - 1]
+
+				zEl.style.display = scope[zIf] ? '' : 'none'
+				if (zEl.nextElementSibling) {
+					if (zEl.nextElementSibling.hasAttribute('z-else'))
+						zEl.nextElementSibling.style.display = scope(zIf) ? 'none' : ''
+				}
+
+				let currVal = scope[zIf]
+				Object.defineProperty(scope, zIf, {
+					get: () => {
+						return currVal
+					},
+					set: (newVal) => {
+						currVal = newVal
+						zEl.style.display = newVal ? '' : 'none'
+						if (zEl.nextElementSibling) {
+							if (zEl.nextElementSibling.hasAttribute('z-else'))
+								zEl.nextElementSibling.style.display = newVal ? 'none' : ''
+						}
+					}
+				})
+
 			}
 		}
 	})

@@ -11,14 +11,20 @@ function onRouteChanged() {
 
 	localStorage.setItem('app.lastHash', hash)
 
-	if (!(app instanceof HTMLElement)) {
+	if (!(appView instanceof HTMLElement)) {
 		throw new ReferenceError('No router view element available for rendering')
 	}
 
 	const view = new routes[hash.split('?')[0]]()
-	while(app.firstChild)
-	  app.removeChild(app.firstChild)
-	app.appendChild(view)
+	while (appView.firstChild)
+		appView.removeChild(appView.firstChild)
+	appView.appendChild(view)
+
+	//Use the line below only while in development! It makes easier to change app variables on DevTools.
+	window.app = appView.firstElementChild
+
+	//This will proccess all Zion directives in our HTML
+	ZION(window.app)
 }
 
 if (!window.location.hash)
