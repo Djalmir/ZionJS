@@ -18,6 +18,19 @@ const ZION = (self) => {
 		'z-onsubmit'
 	]
 
+	//Proccess all curly-brackets match
+	let matches = view.innerHTML.match(/({{.+?}})/g)
+	if (matches) {
+		matches.map((match) => {
+			try {
+				let result = eval(match.replace(/[{}]/g, ''))
+				if (result)
+					view.innerHTML = view.innerHTML.replace(match, result)
+			}
+			catch {}
+		})
+	}
+
 	//Generating and rendering z-for elements
 	let zForElements
 	while (Array.from(view.querySelectorAll("[z-for]")).filter(z => !z.hasAttribute('end-z-for')).filter(e => e.offsetParent != 'null').length) {

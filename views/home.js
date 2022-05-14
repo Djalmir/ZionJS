@@ -154,7 +154,7 @@ template.innerHTML = /*html*/`
 	</section>
 
 	<section>
-		<p z-if="1 + 1 == 3">
+		<p z-if="1 + 1 == 2">
 			Lorem ipsum, dolor sit amet consectetur adipisicing elit. Blanditiis perferendis laudantium distinctio reprehenderit repellat inventore odit! Sapiente fugit esse reiciendis aliquam nisi aut, minima quis dignissimos. Voluptates natus voluptate vitae.
 		</p>
 	</section>
@@ -168,11 +168,16 @@ template.innerHTML = /*html*/`
 				<div z-for="fo in cam.foo">
 					<p>foo description:
 						<span z-model="fo.description"></span>
-						<!-- <span>{{fo.description}}</span> -->
 					</p>
 				</div>
 			</div>
 		</div>
+	</section>
+
+	<section>
+		<p>{{ 1 + 1 }} teste</p>
+		<p>{{2 * 2}} ihaa</p>
+		<p>aueee {{1 + 1 == 1 ? 'kkk' : 'lol'}}</p>
 	</section>
 `
 
@@ -200,21 +205,17 @@ export default class Home extends HTMLElement {
 
 		/* Data */
 		this.test = true
-
 		this.user = {
 			name: 'Hosama',
 			age: 28
 		}
-
 		this.showImage1 = false
 		this.showImage2 = true
-
 		this.showDivs = {
 			div1: true,
 			div2: true,
 			div3: true
 		}
-
 		this.items1 = [
 			{name: 'item 1', description: 'bla bla bla'},
 			{name: 'item 2', description: 'bla bla bla 2'},
@@ -223,15 +224,12 @@ export default class Home extends HTMLElement {
 			{name: 'qwerttyyy', description: 'lol'},
 			{name: 'poiu', description: 'lol'},
 		]
-
 		this.items2 = [
 			{name: 'Vue', description: 'Pra que? rsrs'},
 			{name: 'React', description: 'Coitado kkk'},
 			{name: 'Angular', description: 'pff 🤣'}
 		]
-
 		this.showingItems = this.items1
-
 		this.boxes = [
 			{
 				name: 'Box 1',
