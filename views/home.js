@@ -1,7 +1,6 @@
 const template = document.createElement('template')
 template.innerHTML = /*html*/`
   <link rel="stylesheet" href="style.css">
-
   <style>
 		section {
 			background: var(--dark-bg3);
@@ -40,11 +39,47 @@ template.innerHTML = /*html*/`
 			padding: 13px;
 			border-radius: .2rem;
 		}
+
+		#itemsList {
+			list-style: none;
+			padding: 20px;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 33px;
+		}
+
+		#itemsList li,
+		.box {
+			background: var(--dark-bg2);
+			padding: 13px;
+			border-radius: .2rem;
+		}
+
+		.box {
+			margin: 7px;
+			max-width: 400px;
+			display: inline-block;
+			vertical-align: top;
+		}
+
+		.cam {
+			margin: 7px;
+			padding: 7px;
+			border-radius: .2rem;
+			display: flex;
+			flex-direction: column;
+			border: 1px solid black;
+			background: var(--dark-bg3);
+		}
+
+		.cam div {
+			margin: 7px 0 14px 7px;
+		}
   </style>
 	
 	<h1 style="text-align:center;">ZionJS</h1>
   <section style="display:flex;align-items: flex-end; gap: 13px;">
-		<!-- Testing Two way data binding and method calls on events -->
+		<!-- Testing Two way data binding and method calls on events  -->
 		<label>
 			app.user.name = 'Your name'<br/>
 			<input type="text" z-model="user.name" placeholder="Nome"/>
@@ -58,7 +93,7 @@ template.innerHTML = /*html*/`
   </section>
 
 	<section style="display: flex; gap: 30px; align-items: center;">
-		<!-- Testing conditional rendering -->
+		 <!-- Testing conditional rendering  -->
 		<label z-if="test">
 			<span>app.test = false</span><br/>
 			<input type="text" z-model="showImage1" >
@@ -82,17 +117,17 @@ template.innerHTML = /*html*/`
 	</section>
 
 	<section>
-		<!-- Testing conditional rendering without z-model -->
+		 <!-- Testing conditional rendering without z-model  -->
 		<p>
 			app.showImage2 = false
 		</p>
 		<br/>
-		<img z-if="showImage2" src="../img.png" style="height:53px;margin-left:20px;">
+		<img z-if="showImage2" src="../img.png" style="height:53px;mar-left:20px;">
 		<b z-else>This text shows up when the image isn't visible!</b>
 	</section>
 
 	<section>
-		<!-- Testing nested conditional rendering -->
+		 <!-- Testing nested conditional rendering  -->
 		<div z-if="showDivs.div1" id="div1">
 			<span>app.showDivs.div1 = false</span>
 			<div z-if="showDivs.div2" id="div2">
@@ -100,6 +135,42 @@ template.innerHTML = /*html*/`
 			</div>
 			<div z-if="showDivs.div3" id="div3">
 				<span>app.showDivs.div3 = false</span>
+			</div>
+		</div>
+	</section>
+
+	<section>
+		<label>
+			app.showingItems = app.items2
+		</label>
+		<ul id="itemsList">
+			<li z-for="item in showingItems" style="color:lime;" z-if="item.name != 'asdf'">
+				<b z-model="item.name" z-if="item.name != 'poiu'"></b>
+				<p>{{item.description}}</p>
+				<input type="text" z-model="item.name">
+			</li>
+		</ul>
+		<button z-onclick="showItems">Exibe Itens</button>
+	</section>
+
+	<section>
+		<p z-if="1 + 1 == 3">
+			Lorem ipsum, dolor sit amet consectetur adipisicing elit. Blanditiis perferendis laudantium distinctio reprehenderit repellat inventore odit! Sapiente fugit esse reiciendis aliquam nisi aut, minima quis dignissimos. Voluptates natus voluptate vitae.
+		</p>
+	</section>
+
+	<section>
+		<div z-for="box in boxes" class="box">
+			<b z-model="box.name"></b>
+			<div z-for="cam in box.cams" class="cam">
+				<span z-model="cam.name"></span>
+				<input type="text" z-model="cam.name" placeholder="Nome da câmera">
+				<div z-for="fo in cam.foo">
+					<p>foo description:
+						<span z-model="fo.description"></span>
+						<!-- <span>{{fo.description}}</span> -->
+					</p>
+				</div>
 			</div>
 		</div>
 	</section>
@@ -113,17 +184,17 @@ export default class Home extends HTMLElement {
 
 		/*Watch*/
 		this.watch = {
-			// 'user.name': () => {
-			// 	console.log('user name changed to', this.user.name)
-			// 	if (this.user.name == 'Zama')
-			// 		alert('lol')
-			// },
-			// 'user.age': () => {
-			// 	console.log('user age changed to', this.user.age)
-			// }
-			// 'showImage': () => {
-			// 	console.log('this.showImage', this.showImage)
-			// }
+			'user.name': () => {
+				console.log('user name changed to', this.user.name)
+				if (this.user.name == 'Zama')
+					alert('lol')
+			},
+			'user.age': () => {
+				console.log('user age changed to', this.user.age)
+			},
+			'showImage1': () => {
+				console.log('this.showImage1', this.showImage1)
+			}
 		}
 		/* ******** */
 
@@ -143,6 +214,99 @@ export default class Home extends HTMLElement {
 			div2: true,
 			div3: true
 		}
+
+		this.items1 = [
+			{name: 'item 1', description: 'bla bla bla'},
+			{name: 'item 2', description: 'bla bla bla 2'},
+			{name: 'Da hora a vida!', description: 'huehue br br br'},
+			{name: 'asdf', description: 'lol'},
+			{name: 'qwerttyyy', description: 'lol'},
+			{name: 'poiu', description: 'lol'},
+		]
+
+		this.items2 = [
+			{name: 'Vue', description: 'Pra que? rsrs'},
+			{name: 'React', description: 'Coitado kkk'},
+			{name: 'Angular', description: 'pff 🤣'}
+		]
+
+		this.showingItems = this.items1
+
+		this.boxes = [
+			{
+				name: 'Box 1',
+				cams: [
+					{
+						name: 'b1 - cam1',
+						foo: [
+							{
+								description: 'b1 c1 f1'
+							}
+						]
+					},
+					{
+						name: 'b1 - cam2',
+						foo: [
+							{
+								description: 'b1 c2 f1'
+							},
+							{
+								description: 'b1 c2 f2'
+							}
+						]
+					},
+					{
+						name: 'b1 - cam3',
+						foo: [
+							{
+								description: 'b1 c3 f1'
+							},
+							{
+								description: 'b1 c3 f2'
+							},
+							{
+								description: 'b1 c3 f3'
+							}
+						]
+					}
+				]
+			},
+			{
+				name: 'Box 2',
+				cams: [
+					{
+						name: 'b2 - cam1',
+						foo: []
+					},
+					{
+						name: 'b2 - cam2',
+						foo: []
+					},
+					{
+						name: 'b2 - cam3',
+						foo: []
+					},
+					{
+						name: 'b2 - cam4',
+						foo: []
+					},
+					{
+						name: 'b2 - cam5',
+						foo: [
+							{
+								description: 'b2 c5 f1'
+							},
+							{
+								description: 'b2 c5 f2'
+							},
+							{
+								description: 'b2 c5 f3'
+							}
+						]
+					}
+				]
+			}
+		]
 		/* ******* */
 
 		/* Methods */
@@ -150,9 +314,69 @@ export default class Home extends HTMLElement {
 			this.user.name = 'Djalmir'
 			this.user.age = 32
 		}
+
+		this.showItems = () => {
+			console.log(this.showingItems)
+		}
 		/* ******* */
 
 	}
 }
 
 customElements.define('view-home', Home)
+
+
+
+
+
+
+
+
+
+
+
+
+//TESTES PARA DEFINIR SETTERS E GETTERS MAIS DE UMA VEZ
+window.testes = {
+	get func() {
+		return () => {alert('lol')}
+	}
+}
+
+let oldFunc = window.testes.func
+window.testes = {
+	get func() {
+		return () => {
+			oldFunc()
+			alert('aoba')
+			console.log('Esses alerts estão no final do arquivo views/home.js')
+		}
+	}
+}
+
+// window.testes.func()
+
+
+let _prop
+window.obj1 = {
+	get prop() {
+		return _prop
+	},
+	set prop(newValue) {
+		if (!_prop)
+			_prop = []
+		_prop = [..._prop, newValue]
+		console.log('a veeelha!')
+	}
+}
+
+let oldProp = Object.getOwnPropertyDescriptor(window.obj1, 'prop')
+window.obj1 = {
+	get prop() {
+		return _prop
+	},
+	set prop(newValue) {
+		oldProp.set(newValue)
+		console.log('aaaaaaaaaaaaaaaaaaaaii meu coracebo')
+	}
+}
