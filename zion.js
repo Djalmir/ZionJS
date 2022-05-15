@@ -36,9 +36,11 @@ const ZION = (self) => {
 	while (Array.from(view.querySelectorAll("[z-for]")).filter(z => !z.hasAttribute('end-z-for')).filter(e => e.offsetParent != 'null').length) {
 		zForElements = Array.from(view.querySelectorAll("[z-for]")).filter(z => !z.hasAttribute('end-z-for')).filter(e => e.offsetParent != 'null')
 		zForElements.map((zEl) => {
-			zEl.setAttribute('data_id', 1 + Math.floor(Math.random() * 9999999))
-			while (zForElements.filter(e => e != zEl).find(t => t.getAttribute('data_id') == zEl.getAttribute('data_id')))
+			if (!zEl.hasAttribute('data_id')) {
 				zEl.setAttribute('data_id', 1 + Math.floor(Math.random() * 9999999))
+				while (zForElements.filter(e => e != zEl).find(t => t.getAttribute('data_id') == zEl.getAttribute('data_id')))
+					zEl.setAttribute('data_id', 1 + Math.floor(Math.random() * 9999999))
+			}
 			let arr
 			let nick
 			let array
@@ -51,11 +53,11 @@ const ZION = (self) => {
 					let foundEnd = false
 					while (!foundEnd) {
 						parent.removeChild(startZfor.nextElementSibling)
+
 						foundEnd = startZfor.nextElementSibling.hasAttribute('end-z-for')
 						if (foundEnd)
 							foundEnd = startZfor.nextElementSibling.getAttribute('end-z-for') == zEl.getAttribute('data_id')
 					}
-					parent.removeChild(startZfor)
 					zEl.removeAttribute('end-z-for')
 					zEl.style.display = ''
 				}
@@ -65,7 +67,15 @@ const ZION = (self) => {
 					zEl.nick = arr[0]
 
 					array = arr.slice(1, arr.length)
-					startZfor = parent.insertBefore(document.createComment(zEl.outerHTML), zEl)
+
+					let matches = Array.from(parent.childNodes).filter(child => child.textContent.includes('data_id')).filter(child => child.nodeType == 8)
+					matches.map(match => {
+						if (match.textContent.includes(`data_id="${ zEl.getAttribute('data_id') }"`))
+							startZfor = match
+					})
+					if (!startZfor)
+						startZfor = document.createComment(zEl.outerHTML)
+					parent.insertBefore(startZfor, zEl)
 
 					try {
 						eval('self.' + array).map((z, idx) => {
@@ -100,6 +110,7 @@ const ZION = (self) => {
 				}
 
 				if (newVal) {
+					//TODO: substituir chamada abaixo por setter mais elaborado
 					ZION(self)
 				}
 				else {
@@ -116,24 +127,13 @@ const ZION = (self) => {
 				let scope = eval(`self${ array.length > 1 ? '.' + array.slice(0, array.length - 2) : '' }`)
 				let prop = array[array.length - 1]
 				let currVal = scope[prop]
-				let oldProp = Object.getOwnPropertyDescriptor(scope, prop)
 				Object.defineProperty(scope, prop, {
 					configurable: true,
 					get: () => {
 						return currVal
 					},
 					set: (newVal) => {
-						if (typeof newVal === 'undefined' && eval(newVal) != undefined) {
-							currVal = eval(newVal)
-							if (oldProp.set)
-								oldProp.set(eval(newVal))
-						}
-						else {
-							currVal = newVal
-							if (oldProp.set)
-								oldProp.set(newVal)
-						}
-						// currVal = newVal
+						currVal = newVal
 						updateList(newVal)
 					}
 				})
