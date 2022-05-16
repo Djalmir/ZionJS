@@ -7,15 +7,22 @@ const ZION = (self, zion_component) => {
 		'z-onblur',
 		'z-onchange',
 		'z-onclick',
+		'z-oncopy',
 		'z-onfocus',
 		'z-onkeydown',
 		'z-onkeypress',
 		'z-onkeyup',
+		'z-onmousedown',
 		'z-onmouseenter',
 		'z-onmouseleave',
 		'z-onmousemove',
+		'z-onmouseup',
 		'z-onpaste',
-		'z-onsubmit'
+		'z-onsubmit',
+		'z-ontouchcancel',
+		'z-ontouchend',
+		'z-ontouchmove',
+		'z-ontouchstart'
 	]
 
 	//Proccess all curly-brackets match

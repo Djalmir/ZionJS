@@ -52,7 +52,7 @@ fetch('./style.css')
 				appView.removeChild(appView.firstChild)
 			appView.appendChild(view)
 
-			//Use the lines below only while in development! It makes easier to change app variables on DevTools.
+			//Use the line below only while in development! It makes easier to change app variables on DevTools.
 			window.app = appView.firstElementChild
 
 			//This will proccess all Zion directives in our HTML

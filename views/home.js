@@ -2,8 +2,13 @@ const style = document.createElement('style')
 style.textContent = /*css*/`
 	section {
 		background: var(--dark-bg3);
-		margin: 20px;
+		margin: 17px;
+		box-sizing: border-box;
 		border-radius: .3rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 7px;
+		align-items: flex-start;
 	}
 
 	input {
@@ -40,7 +45,9 @@ style.textContent = /*css*/`
 
 	#itemsList {
 		list-style: none;
-		padding: 20px;
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
 		display: flex;
 		flex-wrap: wrap;
 		gap: 33px;
@@ -55,7 +62,7 @@ style.textContent = /*css*/`
 
 	.box {
 		margin: 7px;
-		max-width: 400px;
+		max-width: calc(100% - 14px);
 		display: inline-block;
 		vertical-align: top;
 	}
@@ -149,21 +156,23 @@ template.innerHTML = /*html*/`
 				Yes
 			</label>
 		</div>
-		<img z-if="showImage1" src="../img.png" style="height:53px;margin-left:20px;" enter-animation="fadeIn .5s linear" leave-animation="fadeOut .5s linear">
-		<b z-else enter-animation="fadeIn .5s linear" leave-animation="fadeOut .5s linear">This text shows up when the image isn't visible!</b>
+		<img z-if="showImage1" src="../img.png" style="height:53px;margin-left:20px;" enter-animation="fadeIn .2s linear" leave-animation="fadeOut .2s linear">
+		<b z-else enter-animation="fadeIn .2s linear" leave-animation="fadeOut .2s linear">This text shows up when the image isn't visible!</b>
 		<label>
 			app.showImage1 = true
 		</label>
 	</section>
 
 	<section>
-		 <!-- Testing conditional rendering without z-model  -->
-		<p>
-			app.showImage2 = false
-		</p>
-		<br/>
-		<img z-if="showImage2" src="../img.png" style="height:53px;margin-left:20px;">
-		<b z-else>This text shows up when the image isn't visible!</b>
+		<!-- Testing conditional rendering without z-model  -->
+		<div>
+			<p>
+				app.showImage2 = false
+			</p>
+			<br/>
+			<img z-if="showImage2" src="../img.png" style="height:53px;margin-left:20px;">
+			<b z-else>This text shows up when the image isn't visible!</b>
+		</div>
 	</section>
 
 	<section>
@@ -180,9 +189,6 @@ template.innerHTML = /*html*/`
 	</section>
 
 	<section>
-		<label>
-			app.showingItems = app.items2
-		</label>
 		<ul id="itemsList">
 			<li z-for="item in showingItems" style="color:lime;" z-if="item.name != 'asdf'" enter-animation="rollIn 1s linear" leave-animation="rollOut .8s linear">
 				<b z-model="item.name" z-if="item.name != 'poiu'" enter-animation="rollIn 1s linear" leave-animation="rollOut .8s linear"></b>
@@ -191,6 +197,9 @@ template.innerHTML = /*html*/`
 			</li>
 		</ul>
 		<button z-onclick="showItems">Exibe Itens</button>
+		<label>
+			app.showingItems = app.items2
+		</label>
 	</section>
 
 	<section>
@@ -215,9 +224,11 @@ template.innerHTML = /*html*/`
 	</section>
 
 	<section>
-		<p>{{ 1 + 1 }} teste</p>
-		<p>{{2 * 2}} ihaa</p>
-		<p>aueee {{1 + 1 == 1 ? 'kkk' : 'lol'}}</p>
+		<div>
+			<p>{{ 1 + 1 }} teste</p>
+			<p>{{2 * 2}} ihaa</p>
+			<p>aueee {{1 + 1 == 1 ? 'kkk' : 'lol'}}</p>
+		</div>
 		<button z-onclick="showMessage('Hello world!')">showMessage('Hello world!')</button>
 	</section>
 `
@@ -373,59 +384,3 @@ export default class Home extends HTMLElement {
 }
 
 customElements.define('view-home', Home)
-
-
-
-
-
-
-
-
-
-
-
-
-//TESTES PARA DEFINIR SETTERS E GETTERS MAIS DE UMA VEZ
-window.testes = {
-	get func() {
-		return () => {alert('lol')}
-	}
-}
-
-let oldFunc = window.testes.func
-window.testes = {
-	get func() {
-		return () => {
-			oldFunc()
-			alert('aoba')
-			console.log('Esses alerts estão no final do arquivo views/home.js')
-		}
-	}
-}
-
-// window.testes.func()
-
-
-let _prop
-window.obj1 = {
-	get prop() {
-		return _prop
-	},
-	set prop(newValue) {
-		if (!_prop)
-			_prop = []
-		_prop = [..._prop, newValue]
-		console.log('a veeelha!')
-	}
-}
-
-let oldProp = Object.getOwnPropertyDescriptor(window.obj1, 'prop')
-window.obj1 = {
-	get prop() {
-		return _prop
-	},
-	set prop(newValue) {
-		oldProp.set(newValue)
-		console.log('aaaaaaaaaaaaaaaaaaaaii meu coracebo')
-	}
-}
