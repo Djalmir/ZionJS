@@ -100,13 +100,20 @@ const ZION = (self, zion_component) => {
 
 							let html = zEl.innerHTML
 
-							let matches = zEl.innerHTML.match(/({{.+?}})/g)
+							let matches = html.match(/({{.+?}})/g)
 							if (matches)
 								matches.map((match) => {
 									html = html.replaceAll(match, z[match.replace(/[{}]/g, '').split('.')[1]])
 								})
 
 							html = html.replaceAll(`${ nick }.`, `${ array }[${ idx }].`)
+
+							matches = html.match(`z-model="${ nick }"`)
+							if (matches) {
+								matches.map((match) => {
+									html = html.replaceAll(match, match.replace(`${ nick }`, `${ array }[${ idx }]`))
+								})
+							}
 
 							newEl.innerHTML = html
 						})
@@ -175,20 +182,28 @@ const ZION = (self, zion_component) => {
 		let arr = binded.split('.')
 		let prop = arr[arr.length - 1]
 		let scope
-		if (arr.length > 1)
+		if (arr.length > 1) {
 			scope = eval('self.' + [...arr.splice(0, arr.length - 1)].join('.'))
+		}
 		else
 			scope = self
+
+		let propIndex = prop.split('[')[1]
+		if (propIndex) {
+			propIndex = propIndex.replace(']', '')
+		}
+
+		prop = prop.split('[')[0]
 
 		try {
 			//fills the element with the property value once the view is loaded
 			if (!el.type)
-				el.textContent = scope[prop]
+				el.textContent = propIndex ? scope[prop][propIndex] : scope[prop]
 			else if (el.type != 'radio' && el.type != 'checkbox') {
-				el.value = scope[prop]
+				el.value = propIndex ? scope[prop][propIndex] : scope[prop]
 			}
 			else if (el.type == 'radio' || el.type == 'checkbox')
-				el.checked = scope[prop] == eval(el.value)
+				el.checked = propIndex ? scope[prop][propIndex] == eval(el.value) : scope[prop] == eval(el.value)
 
 			if (el.getAttribute('readonly') == null) {
 				//update property on input key up event
