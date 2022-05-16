@@ -5,6 +5,7 @@
 	--dark-bg4: #6b6b6b;
 	--dark-font1: #ccc;
 	--dark-font2: #eee;
+	--blue: #039;
 }
 
 * {
@@ -16,9 +17,30 @@
 	font-size: 16px;
 }
 
+::-webkit-scrollbar {
+	background: transparent;
+	width: 8px;
+	height: 4px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--dark-bg1);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--dark-bg3);
+	box-shadow: inset 0px 0px 5px #00000080;
+}
+
+::selection {
+	background: var(--blue);
+	color: var(--dark-font2);
+}
+
 body {
 	background: var(--dark-bg1);
 	color: var(--dark-font1);
+	overflow-y: scroll;
 }
 
 section {

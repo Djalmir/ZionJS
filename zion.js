@@ -96,7 +96,7 @@ const ZION = (self, zion_component) => {
 							let matches = zEl.innerHTML.match(/({{.+?}})/g)
 							if (matches)
 								matches.map((match) => {
-									html = html.replaceAll(match, z[match.replace(/[{{,}}]/g, '').split('.')[1]])
+									html = html.replaceAll(match, z[match.replace(/[{}]/g, '').split('.')[1]])
 								})
 
 							html = html.replaceAll(`${ nick }.`, `${ array }[${ idx }].`)
@@ -183,32 +183,40 @@ const ZION = (self, zion_component) => {
 			else if (el.type == 'radio' || el.type == 'checkbox')
 				el.checked = scope[prop] == eval(el.value)
 
-			//update property on input key up event
-			el.addEventListener('keyup', () => {
-				try {
-					if (typeof el.value === 'undefined' || eval(el.value) != undefined)
-						scope[prop] = eval(el.value)
+			if (el.getAttribute('readonly') == null) {
+				//update property on input key up event
+				el.addEventListener('keyup', () => {
+					if (el.type == 'radio' || el.type == 'checkbox') {
+						try {
+							if (typeof el.value === 'undefined' || eval(el.value) != undefined)
+								scope[prop] = eval(el.value)
+							else
+								scope[prop] = el.value
+						}
+						catch {
+							scope[prop] = el.value
+						}
+					}
 					else
 						scope[prop] = el.value
-				}
-				catch {
-					scope[prop] = el.value
-				}
-			})
-			//update property on change
-			el.addEventListener('change', () => {
-				if ((el.type != 'radio' && el.type != 'checkbox') || el.checked) {
-					try {
-						if (typeof el.value === 'undefined' || eval(el.value) != undefined)
-							scope[prop] = eval(el.value)
-						else
+				})
+				//update property on change
+				el.addEventListener('change', () => {
+					if (el.type == 'radio' || el.type == 'checkbox') {
+						try {
+							if (typeof el.value === 'undefined' || eval(el.value) != undefined)
+								scope[prop] = eval(el.value)
+							else
+								scope[prop] = el.value
+						}
+						catch {
 							scope[prop] = el.value
+						}
 					}
-					catch {
+					else
 						scope[prop] = el.value
-					}
-				}
-			})
+				})
+			}
 
 			let currVal = scope[prop]
 			//Set the property getter and setter
@@ -219,28 +227,30 @@ const ZION = (self, zion_component) => {
 					return currVal
 				},
 				set: (newVal) => {
-					if (typeof newVal === 'undefined' && eval(newVal) != undefined) {
-						currVal = eval(newVal)
-						if (oldProp.set)
-							oldProp.set(eval(newVal))
-					}
-					else {
-						currVal = newVal
-						if (oldProp.set)
-							oldProp.set(newVal)
-					}
-
-					let zElements = elements.filter(e => e.getAttribute('z-model') == el.getAttribute('z-model'))
-					//Once the property receives a new value, update all elements binded to it
-					zElements.map((zEl) => {
-						if (!zEl.type)
-							zEl.textContent = newVal
-						else if (zEl.type != 'radio' && zEl.type != 'checkbox') {
-							zEl.value = newVal
+					if (el.getAttribute('readonly') == null) {
+						if (typeof newVal === 'undefined' && eval(newVal) != undefined) {
+							currVal = eval(newVal)
+							if (oldProp.set)
+								oldProp.set(eval(newVal))
 						}
-						else if (zEl.type == 'radio' || zEl.type == 'checkbox')
-							zEl.checked = eval(newVal) == eval(zEl.value)
-					})
+						else {
+							currVal = newVal
+							if (oldProp.set)
+								oldProp.set(newVal)
+						}
+
+						let zElements = elements.filter(e => e.getAttribute('z-model') == el.getAttribute('z-model'))
+						//Once the property receives a new value, update all elements binded to it
+						zElements.map((zEl) => {
+							if (!zEl.type)
+								zEl.textContent = newVal
+							else if (zEl.type != 'radio' && zEl.type != 'checkbox') {
+								zEl.value = newVal
+							}
+							else if (zEl.type == 'radio' || zEl.type == 'checkbox')
+								zEl.checked = eval(newVal) == eval(zEl.value)
+						})
+					}
 				}
 			})
 		}
@@ -343,10 +353,17 @@ const ZION = (self, zion_component) => {
 						const nextZElVisibility = () => {
 							zEl.nextElementSibling.removeEventListener('animationend', nextZElVisibility)
 							zEl.nextElementSibling.style.display = newVal ? 'none' : ''
+							zEl.nextElementSibling.style.animation = ''
 							if (!newVal) {
 								let enterAnimation = zEl.nextElementSibling.getAttribute('enter-animation')
-								if (enterAnimation)
+								if (enterAnimation) {
+									const rmAnim = () => {
+										zEl.nextElementSibling.removeEventListener('animationend', rmAnim)
+										zEl.nextElementSibling.style.animation = ''
+									}
 									zEl.nextElementSibling.style.animation = enterAnimation
+									zEl.nextElementSibling.addEventListener('animationend', rmAnim)
+								}
 							}
 							else
 								zElVisibility()
@@ -355,10 +372,17 @@ const ZION = (self, zion_component) => {
 						const zElVisibility = () => {
 							zEl.removeEventListener('animationend', zElVisibility)
 							zEl.style.display = newVal ? '' : 'none'
+							zEl.style.animation = ''
 							if (newVal) {
 								let enterAnimation = zEl.getAttribute('enter-animation')
-								if (enterAnimation)
+								if (enterAnimation) {
+									const rmAnim = () => {
+										zEl.removeEventListener('animationend', rmAnim)
+										zEl.style.animation = ''
+									}
 									zEl.style.animation = enterAnimation
+									zEl.addEventListener('animationend', rmAnim)
+								}
 							}
 							else {
 								if (zEl.nextElementSibling) {
@@ -472,10 +496,17 @@ const ZION = (self, zion_component) => {
 									newVal = eval(`"${ scope[zIf] }"`)
 									zEl.nextElementSibling.style.display = newVal ? 'none' : ''
 								}
+								zEl.nextElementSibling.style.animation = ''
 								if (!newVal) {
 									let enterAnimation = zEl.nextElementSibling.getAttribute('enter-animation')
-									if (enterAnimation)
+									if (enterAnimation) {
+										const rmAnim = () => {
+											zEl.nextElementSibling.removeEventListener('animationend', rmAnim)
+											zEl.nextElementSibling.style.animation = ''
+										}
 										zEl.nextElementSibling.style.animation = enterAnimation
+										zEl.nextElementSibling.addEventListener('animationend', rmAnim)
+									}
 								}
 								else
 									zElVisibility()
@@ -492,10 +523,17 @@ const ZION = (self, zion_component) => {
 									newVal = eval(`${ scope[zIf] }`)
 									zEl.style.display = newVal ? '' : 'none'
 								}
+								zEl.style.animation = ''
 								if (newVal) {
 									let enterAnimation = zEl.getAttribute('enter-animation')
-									if (enterAnimation)
+									if (enterAnimation) {
+										const rmAnim = () => {
+											zEl.removeEventListener('animationend', rmAnim)
+											zEl.style.animation = ''
+										}
 										zEl.style.animation = enterAnimation
+										zEl.addEventListener('animationend', rmAnim)
+									}
 								}
 								else {
 									if (zEl.nextElementSibling) {

@@ -136,7 +136,7 @@ template.innerHTML = /*html*/`
 		 <!-- Testing conditional rendering  -->
 		<label z-if="test">
 			<span>app.test = false</span><br/>
-			<input type="text" z-model="showImage1" >
+			<input type="text" z-model="showImage1" readonly>
 		</label>
 		<div>
 			<b>Show image?</b><br/>

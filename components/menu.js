@@ -3,7 +3,6 @@ template.innerHTML = /*html*/`
 <style>
 	header{
 		margin: 0;
-		color: #0099ff;
 		text-align: center;
 	}
 
@@ -23,7 +22,9 @@ template.innerHTML = /*html*/`
 	}
 
 	li {
+		color: #09f;
 		cursor: pointer;
+		font-weight: bold;
 	}
 </style>
 
