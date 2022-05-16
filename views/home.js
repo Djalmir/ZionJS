@@ -75,6 +75,46 @@ template.innerHTML = /*html*/`
 		.cam div {
 			margin: 7px 0 14px 7px;
 		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+			}
+			to {
+				opacity: 1;
+			}
+		}
+
+		@keyframes fadeOut {
+			from {
+				opacity: 1;
+			}
+			to {
+				opacity: 0;
+			}
+		}
+
+		@keyframes rollIn {
+			from {
+				transform: translate(100%,0);
+				opacity: 0;
+			}
+			to {
+				transform: translate(0,0);
+				opacity: 1;
+			}
+		}
+
+		@keyframes rollOut {
+			from {
+				transform: translate(0,0);
+				opacity: 1;
+			}
+			to {
+				transform: translate(-100%,0);
+				opacity: 0;
+			}
+		}
   </style>
 	
 	<h1 style="text-align:center;">ZionJS</h1>
@@ -109,8 +149,8 @@ template.innerHTML = /*html*/`
 				Yes
 			</label>
 		</div>
-		<img z-if="showImage1" src="../img.png" style="height:53px;margin-left:20px;">
-		<b z-else>This text shows up when the image isn't visible!</b>
+		<img z-if="showImage1" src="../img.png" style="height:53px;margin-left:20px;" enter-animation="fadeIn .5s linear" leave-animation="fadeOut .5s linear">
+		<b z-else enter-animation="fadeIn .5s linear" leave-animation="fadeOut .5s linear">This text shows up when the image isn't visible!</b>
 		<label>
 			app.showImage1 = true
 		</label>
@@ -128,12 +168,12 @@ template.innerHTML = /*html*/`
 
 	<section>
 		 <!-- Testing nested conditional rendering  -->
-		<div z-if="showDivs.div1" id="div1">
+		<div z-if="showDivs.div1" id="div1" enter-animation="rollIn .2s linear" leave-animation="rollOut .2s linear">
 			<span>app.showDivs.div1 = false</span>
-			<div z-if="showDivs.div2" id="div2">
+			<div z-if="showDivs.div2" id="div2" enter-animation="rollIn .2s linear" leave-animation="rollOut .2s linear">
 				<span>app.showDivs.div2 = false</span>
 			</div>
-			<div z-if="showDivs.div3" id="div3">
+			<div z-if="showDivs.div3" id="div3" enter-animation="rollIn .2s linear" leave-animation="rollOut .2s linear">
 				<span>app.showDivs.div3 = false</span>
 			</div>
 		</div>
@@ -144,8 +184,8 @@ template.innerHTML = /*html*/`
 			app.showingItems = app.items2
 		</label>
 		<ul id="itemsList">
-			<li z-for="item in showingItems" style="color:lime;" z-if="item.name != 'asdf'">
-				<b z-model="item.name" z-if="item.name != 'poiu'"></b>
+			<li z-for="item in showingItems" style="color:lime;" z-if="item.name != 'asdf'" enter-animation="rollIn 1s linear" leave-animation="rollOut .8s linear">
+				<b z-model="item.name" z-if="item.name != 'poiu'" enter-animation="rollIn 1s linear" leave-animation="rollOut .8s linear"></b>
 				<p>{{item.description}}</p>
 				<input type="text" z-model="item.name">
 			</li>

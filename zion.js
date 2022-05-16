@@ -297,7 +297,6 @@ const ZION = (self, zion_component) => {
 				scope = eval('self.' + [...arr.splice(0, arr.length - 1)].join('.'))
 			else
 				scope = self
-
 			zEl.style.display = self[zIf] ? '' : 'none'
 			if (zEl.nextElementSibling) {
 				if (zEl.nextElementSibling.hasAttribute('z-else'))
@@ -312,12 +311,17 @@ const ZION = (self, zion_component) => {
 					return currVal
 				},
 				set: (newVal) => {
+					let changedCurrVal = false
 					if (oldProp.set) {
 						if (typeof newVal === 'undefined' && eval(newVal) != undefined) {
+							if (currVal != eval(newVal))
+								changedCurrVal = true
 							currVal = eval(newVal)
 							oldProp.set(eval(newVal))
 						}
 						else {
+							if (currVal != newVal)
+								changedCurrVal = true
 							currVal = newVal
 							oldProp.set(newVal)
 						}
@@ -329,10 +333,62 @@ const ZION = (self, zion_component) => {
 							currVal = newVal
 					}
 
-					zEl.style.display = newVal ? '' : 'none'
-					if (zEl.nextElementSibling) {
-						if (zEl.nextElementSibling.hasAttribute('z-else'))
+					if (changedCurrVal) {
+						const nextZElVisibility = () => {
+							zEl.nextElementSibling.removeEventListener('animationend', nextZElVisibility)
 							zEl.nextElementSibling.style.display = newVal ? 'none' : ''
+							if (!newVal) {
+								let enterAnimation = zEl.nextElementSibling.getAttribute('enter-animation')
+								if (enterAnimation)
+									zEl.nextElementSibling.style.animation = enterAnimation
+							}
+							else
+								zElVisibility()
+						}
+
+						const zElVisibility = () => {
+							zEl.removeEventListener('animationend', zElVisibility)
+							zEl.style.display = newVal ? '' : 'none'
+							if (newVal) {
+								let enterAnimation = zEl.getAttribute('enter-animation')
+								if (enterAnimation)
+									zEl.style.animation = enterAnimation
+							}
+							else {
+								if (zEl.nextElementSibling) {
+									if (zEl.nextElementSibling.hasAttribute('z-else')) {
+										nextZElVisibility()
+									}
+								}
+							}
+						}
+
+						if (zEl.style.display != 'none') {
+							let leaveAnimation = zEl.getAttribute('leave-animation')
+							if (leaveAnimation) {
+								zEl.style.animation = leaveAnimation
+								zEl.addEventListener('animationend', zElVisibility)
+							}
+							else
+								zElVisibility()
+						}
+						else {
+							if (zEl.nextElementSibling) {
+								if (zEl.nextElementSibling.hasAttribute('z-else')) {
+									let leaveAnimation = zEl.nextElementSibling.getAttribute('leave-animation')
+									if (leaveAnimation) {
+										zEl.nextElementSibling.style.animation = leaveAnimation
+										zEl.nextElementSibling.addEventListener('animationend', nextZElVisibility)
+									}
+									else
+										nextZElVisibility()
+								}
+								else
+									zElVisibility()
+							}
+							else
+								zElVisibility()
+						}
 					}
 				}
 			})
@@ -380,33 +436,107 @@ const ZION = (self, zion_component) => {
 						return currVal
 					},
 					set: (newVal) => {
-						if (oldProp.set) {
-							if (typeof newVal === 'undefined' && eval(newVal) != undefined) {
-								currVal = eval(newVal)
+						let changedCurrVal = false
+						if (typeof newVal === 'undefined' && eval(newVal) != undefined) {
+							if (currVal != eval(newVal))
+								changedCurrVal = true
+							currVal = eval(newVal)
+							if (oldProp.set)
 								oldProp.set(eval(newVal))
-							}
-							else {
-								currVal = newVal
-								oldProp.set(newVal)
-							}
 						}
 						else {
-							if (typeof newVal === 'undefined' && eval(newVal) != undefined) {
-								currVal = eval(newVal)
-							}
-							else {
-								currVal = newVal
-							}
+							if (currVal != newVal)
+								changedCurrVal = true
+							currVal = newVal
+							if (oldProp.set)
+								oldProp.set(newVal)
 						}
 
-						let logic = originalZif.split(zIf)[1]
-						if (logic)
-							zEl.style.display = (eval(`"${ scope[zIf] }" ${ logic }`) ? '' : 'none')
-						else
-							zEl.style.display = (eval(`${ scope[zIf] }`) ? '' : 'none')
-						if (zEl.nextElementSibling) {
-							if (zEl.nextElementSibling.hasAttribute('z-else'))
-								zEl.nextElementSibling.style.display = eval(`"${ scope[zIf] }" ${ logic }`) ? 'none' : ''
+						if (changedCurrVal) {
+							let logic = originalZif.split(zIf)[1]
+							const nextZElVisibility = () => {
+								zEl.nextElementSibling.removeEventListener('animationend', nextZElVisibility)
+								// zEl.nextElementSibling.style.display = newVal ? 'none' : ''
+								let newVal
+								if (logic) {
+									newVal = eval(`"${ scope[zIf] }" ${ logic }`)
+									zEl.nextElementSibling.style.display = newVal ? 'none' : ''
+								}
+								else {
+									newVal = eval(`"${ scope[zIf] }"`)
+									zEl.nextElementSibling.style.display = newVal ? 'none' : ''
+								}
+								if (!newVal) {
+									let enterAnimation = zEl.nextElementSibling.getAttribute('enter-animation')
+									if (enterAnimation)
+										zEl.nextElementSibling.style.animation = enterAnimation
+								}
+								else
+									zElVisibility()
+							}
+
+							const zElVisibility = () => {
+								zEl.removeEventListener('animationend', zElVisibility)
+								let newVal
+								if (logic) {
+									newVal = eval(`"${ scope[zIf] }" ${ logic }`)
+									zEl.style.display = newVal ? '' : 'none'
+								}
+								else {
+									newVal = eval(`${ scope[zIf] }`)
+									zEl.style.display = newVal ? '' : 'none'
+								}
+								if (newVal) {
+									let enterAnimation = zEl.getAttribute('enter-animation')
+									if (enterAnimation)
+										zEl.style.animation = enterAnimation
+								}
+								else {
+									if (zEl.nextElementSibling) {
+										if (zEl.nextElementSibling.hasAttribute('z-else')) {
+											nextZElVisibility()
+										}
+									}
+								}
+							}
+
+							let oldVal = zEl.style.display != 'none'
+							let changedResult = false
+							if (logic) {
+								changedResult = oldVal != eval(`"${ scope[zIf] }" ${ logic }`)
+							}
+							else {
+								changedResult = oldVal != eval(`"${ scope[zIf] }"`)
+							}
+
+							if (changedResult) {
+								if (zEl.style.display != 'none') {
+									let leaveAnimation = zEl.getAttribute('leave-animation')
+									if (leaveAnimation) {
+										zEl.style.animation = leaveAnimation
+										zEl.addEventListener('animationend', zElVisibility)
+									}
+									else
+										zElVisibility()
+								}
+								else {
+									if (zEl.nextElementSibling) {
+										if (zEl.nextElementSibling.hasAttribute('z-else')) {
+											let leaveAnimation = zEl.nextElementSibling.getAttribute('leave-animation')
+											if (leaveAnimation) {
+												zEl.nextElementSibling.style.animation = leaveAnimation
+												zEl.nextElementSibling.addEventListener('animationend', nextZElVisibility)
+											}
+											else
+												nextZElVisibility()
+										}
+										else
+											zElVisibility()
+									}
+									else
+										zElVisibility()
+								}
+							}
 						}
 					}
 				})
