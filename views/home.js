@@ -178,6 +178,7 @@ template.innerHTML = /*html*/`
 		<p>{{ 1 + 1 }} teste</p>
 		<p>{{2 * 2}} ihaa</p>
 		<p>aueee {{1 + 1 == 1 ? 'kkk' : 'lol'}}</p>
+		<button z-onclick="showMessage('Hello world!')">showMessage('Hello world!')</button>
 	</section>
 `
 
@@ -199,6 +200,9 @@ export default class Home extends HTMLElement {
 			},
 			'showImage1': () => {
 				console.log('this.showImage1', this.showImage1)
+			},
+			'showingItems[0].name': () => {
+				console.log('nome: ', this.showingItems[0].name)
 			}
 		}
 		/* ******** */
@@ -316,8 +320,15 @@ export default class Home extends HTMLElement {
 		this.showItems = () => {
 			console.log(this.showingItems)
 		}
-		/* ******* */
 
+		this.showMessage = (msg) => {
+			alert(msg)
+		}
+
+		this.calc = (calcule) => {
+			alert(eval(calcule))
+		}
+		/* ******* */
 	}
 }
 

@@ -1,6 +1,6 @@
-const ZION = (self) => {
+const ZION = (self, zion_component) => {
 
-	const view = self.shadowRoot
+	const view = zion_component ? zion_component : self.shadowRoot
 	const watch = self['watch'] || {}
 
 	const eventDirectives = [
@@ -110,8 +110,7 @@ const ZION = (self) => {
 				}
 
 				if (newVal) {
-					//TODO: substituir chamada abaixo por setter mais elaborado
-					ZION(self)
+					ZION(self, zEl.parentElement)
 				}
 				else {
 					zEl.setAttribute('end-z-for', zEl.getAttribute('data_id'))
@@ -149,8 +148,16 @@ const ZION = (self) => {
 		let elements = Array.from(view.querySelectorAll(`[${ eDirective }]`))
 		elements.map((el) => {
 			let method = el.getAttribute(eDirective).replaceAll('this', 'self')
-			//The line below would look like: el.onclick = someMethod
-			el[`${ eDirective.replace(/z-/gi, '') }`] = self[method] || eval(method)
+			let params = method.match(/\(.+?\)/g)
+			if (params) {
+				method = method.replace(params, '')
+				params = params[0].replace(/[\(\)]/g, '').replace(/^[`"']/g, '').replace(/[`"']$/g, '')
+				//The line below would look like: el.onclick = someMethod
+				el[`${ eDirective.replace(/z-/gi, '') }`] = () => self[method](params)
+			}
+			else {
+				el[`${ eDirective.replace(/z-/gi, '') }`] = self[method] || eval(method)
+			}
 		})
 	})
 
@@ -242,39 +249,41 @@ const ZION = (self) => {
 		}
 	})
 
-	let watchKeys = {}
-	//Set the watch function to all keys
-	Object.keys(watch).map((watchKey) => {
-		let arr = watchKey.split('.')
-		let prop = arr[arr.length - 1]
-		let scope
-		if (arr.length > 1)
-			scope = eval('self.' + [...arr.splice(0, arr.length - 1)].join('.'))
-		else
-			scope = self
-		watchKeys[watchKey] = scope[prop]
-		let oldProp = Object.getOwnPropertyDescriptor(scope, prop)
-		Object.defineProperty(scope, prop, {
-			configurable: true,
-			get: () => {
-				return watchKeys[watchKey]
-			},
-			set: (newVal) => {
-				if (watchKeys[watchKey])
-					watchKeys[watchKey] = newVal
-				else {
-					watchKeys[watchKey] = newVal
+	if (!zion_component) {
+		let watchKeys = {}
+		//Set the watch function to all keys
+		Object.keys(watch).map((watchKey) => {
+			let arr = watchKey.split('.')
+			let prop = arr[arr.length - 1]
+			let scope
+			if (arr.length > 1)
+				scope = eval('self.' + [...arr.splice(0, arr.length - 1)].join('.'))
+			else
+				scope = self
+			watchKeys[watchKey] = scope[prop]
+			let oldProp = Object.getOwnPropertyDescriptor(scope, prop)
+			Object.defineProperty(scope, prop, {
+				configurable: true,
+				get: () => {
+					return watchKeys[watchKey]
+				},
+				set: (newVal) => {
+					if (watchKeys[watchKey])
+						watchKeys[watchKey] = newVal
+					else {
+						watchKeys[watchKey] = newVal
+					}
+					watch[watchKey]()
+					if (oldProp.set) {
+						if (typeof newVal === 'undefined' && eval(newVal) != undefined)
+							oldProp.set(eval(newVal))
+						else
+							oldProp.set(newVal)
+					}
 				}
-				watch[watchKey]()
-				if (oldProp.set) {
-					if (typeof newVal === 'undefined' && eval(newVal) != undefined)
-						oldProp.set(eval(newVal))
-					else
-						oldProp.set(newVal)
-				}
-			}
+			})
 		})
-	})
+	}
 
 	//Proccess all z-if directives
 	let zIfElements = Array.from(view.querySelectorAll('[z-if]')).filter(el => !el.hasAttribute('end-z-for')).filter(e => e.offsetParent != null)
