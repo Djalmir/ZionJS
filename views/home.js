@@ -1,5 +1,9 @@
 const style = document.createElement('style')
 style.textContent = /*css*/`
+	h2 {
+		text-align: center;
+	}
+
 	section {
 		background: var(--dark-bg3);
 		margin: 17px;
@@ -125,6 +129,7 @@ const template = document.createElement('template')
 template.innerHTML = /*html*/`
 	<!-- <link rel="stylesheet" href="style.css"> -->
 	<h1 style="text-align:center;">ZionJS</h1>
+	<h2>{{mainMessage}}</h2>
   <section style="display:flex;align-items: flex-end; gap: 13px;">
 		<!-- Testing Two way data binding and method calls on events  -->
 		<label>
@@ -259,6 +264,7 @@ export default class Home extends HTMLElement {
 		/* ******** */
 
 		/* Data */
+		this.mainMessage = 'Hello world!'
 		this.test = true
 		this.user = {
 			name: 'Hosama',

@@ -30,9 +30,13 @@ const ZION = (self, zion_component) => {
 	if (matches) {
 		matches.map((match) => {
 			try {
-				let result = eval(match.replace(/[{}]/g, ''))
-				if (result)
-					view.innerHTML = view.innerHTML.replace(match, result)
+				if (self[match.replace(/[{}]/g, '')])
+					view.innerHTML = view.innerHTML.replace(match, self[match.replace(/[{}]/g, '')])
+				else {
+					let result = eval(match.replace(/[{}]/g, ''))
+					if (result)
+						view.innerHTML = view.innerHTML.replace(match, result)
+				}
 			}
 			catch {}
 		})

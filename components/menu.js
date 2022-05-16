@@ -47,7 +47,6 @@ export default class Menu extends HTMLElement {
 			location.hash = `#${ path }`
 		}
 
-		ZION(this)
 	}
 }
 

@@ -26,6 +26,7 @@ fetch('./style.css')
 				componentStyle = component.shadowRoot.insertBefore(document.createElement('style'), component.shadowRoot.firstElementChild)
 				componentStyle.textContent = globalStyle
 			}
+			ZION(component)
 		})
 
 		async function onRouteChanged() {
