@@ -1,25 +1,23 @@
+// const style = document.createElement('style')
+// style.textContent = /*css*/`
+
+// `
+
 const template = document.createElement('template')
 template.innerHTML = /*html*/`
-<zion-component>
-  <link rel="stylesheet" href="style.css">
+<!-- <link rel="stylesheet" href="style.css"> -->
 
-  <style>
-
-  </style>
-
-  <section>
-    <h1>About.JS</h1>
-  </section>
- </zion-component>
+<section>
+	<h1>About.JS</h1>
+</section>
 `
 
 export default class About extends HTMLElement {
 	constructor() {
 		super()
 		this.attachShadow({mode: 'open'})
+		// this.shadowRoot.appendChild(style.cloneNode(true))
 		this.shadowRoot.appendChild(template.content.cloneNode(true))
-
-
 	}
 }
 

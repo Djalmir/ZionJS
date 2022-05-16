@@ -1,122 +1,122 @@
+const style = document.createElement('style')
+style.textContent = /*css*/`
+	section {
+		background: var(--dark-bg3);
+		margin: 20px;
+		border-radius: .3rem;
+	}
+
+	input {
+		background: var(--dark-bg2);
+	}
+
+	#div1 {
+		width: fit-content;
+		background: var(--dark-bg2);
+		margin: auto;
+		padding: 13px;
+		border-radius: .2rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 13px;
+	}
+
+	#div1 span {
+		color: var(--dark-font2);
+	}
+
+	#div2 {
+		background: var(--dark-bg3);
+		padding: 13px;
+		border-radius: .2rem;
+	}
+
+	#div3 {
+		background: var(--dark-bg4);
+		padding: 13px;
+		border-radius: .2rem;
+	}
+
+	#itemsList {
+		list-style: none;
+		padding: 20px;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 33px;
+	}
+
+	#itemsList li,
+	.box {
+		background: var(--dark-bg2);
+		padding: 13px;
+		border-radius: .2rem;
+	}
+
+	.box {
+		margin: 7px;
+		max-width: 400px;
+		display: inline-block;
+		vertical-align: top;
+	}
+
+	.cam {
+		margin: 7px;
+		padding: 7px;
+		border-radius: .2rem;
+		display: flex;
+		flex-direction: column;
+		border: 1px solid black;
+		background: var(--dark-bg3);
+	}
+
+	.cam div {
+		margin: 7px 0 14px 7px;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes fadeOut {
+		from {
+			opacity: 1;
+		}
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes rollIn {
+		from {
+			transform: translate(100%,0);
+			opacity: 0;
+		}
+		to {
+			transform: translate(0,0);
+			opacity: 1;
+		}
+	}
+
+	@keyframes rollOut {
+		from {
+			transform: translate(0,0);
+			opacity: 1;
+		}
+		to {
+			transform: translate(-100%,0);
+			opacity: 0;
+		}
+	}
+`
 const template = document.createElement('template')
 template.innerHTML = /*html*/`
-  <link rel="stylesheet" href="style.css">
-  <style>
-		section {
-			background: var(--dark-bg3);
-			margin: 20px;
-			border-radius: .3rem;
-		}
-
-		input {
-			background: var(--dark-bg2);
-		}
-
-		#div1 {
-			width: fit-content;
-			background: var(--dark-bg2);
-			margin: auto;
-			padding: 13px;
-			border-radius: .2rem;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 13px;
-		}
-
-		#div1 span {
-			color: var(--dark-font2);
-		}
-
-		#div2 {
-			background: var(--dark-bg3);
-			padding: 13px;
-			border-radius: .2rem;
-		}
-
-		#div3 {
-			background: var(--dark-bg4);
-			padding: 13px;
-			border-radius: .2rem;
-		}
-
-		#itemsList {
-			list-style: none;
-			padding: 20px;
-			display: flex;
-			flex-wrap: wrap;
-			gap: 33px;
-		}
-
-		#itemsList li,
-		.box {
-			background: var(--dark-bg2);
-			padding: 13px;
-			border-radius: .2rem;
-		}
-
-		.box {
-			margin: 7px;
-			max-width: 400px;
-			display: inline-block;
-			vertical-align: top;
-		}
-
-		.cam {
-			margin: 7px;
-			padding: 7px;
-			border-radius: .2rem;
-			display: flex;
-			flex-direction: column;
-			border: 1px solid black;
-			background: var(--dark-bg3);
-		}
-
-		.cam div {
-			margin: 7px 0 14px 7px;
-		}
-
-		@keyframes fadeIn {
-			from {
-				opacity: 0;
-			}
-			to {
-				opacity: 1;
-			}
-		}
-
-		@keyframes fadeOut {
-			from {
-				opacity: 1;
-			}
-			to {
-				opacity: 0;
-			}
-		}
-
-		@keyframes rollIn {
-			from {
-				transform: translate(100%,0);
-				opacity: 0;
-			}
-			to {
-				transform: translate(0,0);
-				opacity: 1;
-			}
-		}
-
-		@keyframes rollOut {
-			from {
-				transform: translate(0,0);
-				opacity: 1;
-			}
-			to {
-				transform: translate(-100%,0);
-				opacity: 0;
-			}
-		}
-  </style>
-	
+	<!-- <link rel="stylesheet" href="style.css"> -->
 	<h1 style="text-align:center;">ZionJS</h1>
   <section style="display:flex;align-items: flex-end; gap: 13px;">
 		<!-- Testing Two way data binding and method calls on events  -->
@@ -162,7 +162,7 @@ template.innerHTML = /*html*/`
 			app.showImage2 = false
 		</p>
 		<br/>
-		<img z-if="showImage2" src="../img.png" style="height:53px;mar-left:20px;">
+		<img z-if="showImage2" src="../img.png" style="height:53px;margin-left:20px;">
 		<b z-else>This text shows up when the image isn't visible!</b>
 	</section>
 
@@ -221,11 +221,11 @@ template.innerHTML = /*html*/`
 		<button z-onclick="showMessage('Hello world!')">showMessage('Hello world!')</button>
 	</section>
 `
-
 export default class Home extends HTMLElement {
 	constructor() {
 		super()
 		this.attachShadow({mode: 'open'})
+		this.shadowRoot.appendChild(style.cloneNode(true))
 		this.shadowRoot.appendChild(template.content.cloneNode(true))
 
 		/*Watch*/

@@ -327,10 +327,16 @@ const ZION = (self, zion_component) => {
 						}
 					}
 					else {
-						if (typeof newVal === 'undefined' && eval(newVal) != undefined)
+						if (typeof newVal === 'undefined' && eval(newVal) != undefined) {
+							if (currVal != eval(newVal))
+								changedCurrVal = true
 							currVal = eval(newVal)
-						else
+						}
+						else {
+							if (currVal != newVal)
+								changedCurrVal = true
 							currVal = newVal
+						}
 					}
 
 					if (changedCurrVal) {
