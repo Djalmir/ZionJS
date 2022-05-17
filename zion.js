@@ -461,13 +461,19 @@ const ZION = (self, zion_component) => {
 				let originalZif = zIf
 				let arr = zIf.split('.')
 				let scope = `self${ arr.length ? '.' + arr.slice(0, arr.length - 1) : '' }`
-				if (eval(scope)) {
-					scope = eval(scope)
-					zIf = arr[arr.length - 1]
+				try {
+					if (eval(scope)) {
+						scope = eval(scope)
+						zIf = arr[arr.length - 1]
+					}
+					else {
+						scope = eval(`self${ arr.length > 2 ? '.' + arr.slice(0, arr.length - 2) : '' } `)
+						zIf = arr[arr.length - 1]
+					}
 				}
-				else {
+				catch {
 					scope = eval(`self${ arr.length > 2 ? '.' + arr.slice(0, arr.length - 2) : '' } `)
-					zIf = arr[arr.length - 2]
+					zIf = arr[arr.length - 1]
 				}
 
 				let currVal
