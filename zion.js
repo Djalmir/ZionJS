@@ -633,6 +633,8 @@ const ZION = (self, zion_component) => {
 }
 
 const zGet = async (url, headers) => {
+	let event = new CustomEvent('zBeforeRequest', {detail: {url: url, headers: headers}})
+	document.dispatchEvent(event)
 	return new Promise((result, rej) => {
 		fetch(url, {
 			method: 'get',
@@ -653,11 +655,15 @@ const zGet = async (url, headers) => {
 				else {
 					result(res)
 				}
+				let event = new CustomEvent('zAfterRequest', {detail: {res: res}})
+				document.dispatchEvent(event)
 			})
 	})
 }
 
 const zPost = async (url, body, headers) => {
+	let event = new CustomEvent('zBeforeRequest', {detail: {url: url, body: body, headers: headers}})
+	document.dispatchEvent(event)
 	return new Promise((result, rej) => {
 		fetch(url, {
 			method: 'post',
@@ -679,11 +685,15 @@ const zPost = async (url, body, headers) => {
 				else {
 					result(res)
 				}
+				let event = new CustomEvent('zAfterRequest', {detail: {res: res}})
+				document.dispatchEvent(event)
 			})
 	})
 }
 
 const zPut = async (url, body, headers) => {
+	let event = new CustomEvent('zBeforeRequest', {detail: {url: url, body: body, headers: headers}})
+	document.dispatchEvent(event)
 	return new Promise((result, rej) => {
 		fetch(url, {
 			method: 'put',
@@ -705,11 +715,15 @@ const zPut = async (url, body, headers) => {
 				else {
 					result(res)
 				}
+				let event = new CustomEvent('zAfterRequest', {detail: {res: res}})
+				document.dispatchEvent(event)
 			})
 	})
 }
 
 const zDelete = async (url, headers) => {
+	let event = new CustomEvent('zBeforeRequest', {detail: {url: url, headers: headers}})
+	document.dispatchEvent(event)
 	return new Promise((result, rej) => {
 		fetch(url, {
 			method: 'delete',
@@ -730,6 +744,8 @@ const zDelete = async (url, headers) => {
 				else {
 					result(res)
 				}
+				let event = new CustomEvent('zAfterRequest', {detail: {res: res}})
+				document.dispatchEvent(event)
 			})
 	})
 }
