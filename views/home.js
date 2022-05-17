@@ -146,7 +146,7 @@ template.innerHTML = /*html*/`
 
 	<section style="display: flex; gap: 30px; align-items: center;">
 		 <!-- Testing conditional rendering  -->
-		<label z-if="test">
+		<label z-if="!test">
 			<span>app.test = false</span><br/>
 			<input type="text" z-model="showImage1" readonly>
 		</label>

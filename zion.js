@@ -480,7 +480,12 @@ const ZION = (self, zion_component) => {
 				if ((scope[zIf]))
 					currVal = scope[zIf]
 				else {
-					currVal = eval('self.' + originalZif)
+					let startsWithNegation = false
+					if (originalZif.startsWith('!')) {
+						startsWithNegation = true
+						originalZif = originalZif.slice(1, originalZif.length)
+					}
+					currVal = eval((startsWithNegation ? '!' : '') + 'self.' + originalZif)
 					zIf = zIf.split(' ')[0]
 				}
 
@@ -490,7 +495,13 @@ const ZION = (self, zion_component) => {
 						zEl.nextElementSibling.style.display = currVal ? 'none' : ''
 				}
 
-				currVal = scope[zIf]
+				if (zIf.startsWith('!')) {
+					zIf = zIf.slice(1, zIf.length)
+					currVal = !scope[zIf]
+				}
+				else
+					currVal = scope[zIf]
+
 				let oldProp = Object.getOwnPropertyDescriptor(scope, zIf)
 				Object.defineProperty(scope, zIf, {
 					configurable: true,
