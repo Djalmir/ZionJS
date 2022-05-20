@@ -7,6 +7,7 @@ const ZION = (self, zion_component) => {
 		'z-onblur',
 		'z-onchange',
 		'z-onclick',
+		'z-oncontextmenu',
 		'z-oncopy',
 		'z-onfocus',
 		'z-onkeydown',
