@@ -9,6 +9,7 @@ const ZION = (self, zion_component) => {
 		'z-onclick',
 		'z-oncontextmenu',
 		'z-oncopy',
+		'z-ondblclick',
 		'z-onfocus',
 		'z-onkeydown',
 		'z-onkeypress',
