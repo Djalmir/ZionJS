@@ -15,6 +15,12 @@ style.textContent = /*css*/`
 		align-items: flex-start;
 	}
 
+	#testBt {
+		position: fixed;
+		top: 10px;
+		left: 10px;
+	}
+
 	input {
 		background: var(--dark-bg2);
 	}
@@ -130,6 +136,7 @@ template.innerHTML = /*html*/`
 	<!-- <link rel="stylesheet" href="style.css"> -->
 	<h1 style="text-align:center;">ZionJS</h1>
 	<h2>{{mainMessage}}</h2>
+	<button z-if="positionFixedzIfTest" id="testBt">teste</button>
   <section style="display:flex;align-items: flex-end; gap: 13px;">
 		<!-- Testing Two way data binding and method calls on events  -->
 		<label>
@@ -236,6 +243,12 @@ template.innerHTML = /*html*/`
 		</div>
 		<button z-onclick="showMessage('Hello world!')">showMessage('Hello world!')</button>
 	</section>
+
+	<section>
+		<fragment z-for="item in items1">
+			<p>{{item.name}}</p>
+		</fragment>
+	</section>
 `
 export default class Home extends HTMLElement {
 	constructor() {
@@ -264,6 +277,8 @@ export default class Home extends HTMLElement {
 		/* ******** */
 
 		/* Data */
+		this.positionFixedzIfTest = false
+
 		this.mainMessage = 'Hello world!'
 		this.test = true
 		this.user = {

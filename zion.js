@@ -98,10 +98,8 @@ const ZION = (self, zion_component) => {
 							})
 
 							Array.from(newEl.attributes).map((attr) => {
-								let n = attr.nodeName.replaceAll(`${ nick }.`, `${ array }[${ idx }].`)
 								let v = attr.nodeValue.replaceAll(`${ nick }.`, `${ array }[${ idx }].`)
-
-								newEl.setAttribute(n, v)
+								newEl.setAttribute(attr.nodeName, v)
 							})
 
 							let html = zEl.innerHTML
@@ -122,6 +120,13 @@ const ZION = (self, zion_component) => {
 							}
 
 							newEl.innerHTML = html
+
+							if (newEl.tagName == 'FRAGMENT') {
+								Array.from(newEl.children).map((child) => {
+									newEl.parentElement.insertBefore(child, newEl)
+								})
+								newEl.parentElement.removeChild(newEl)
+							}
 						})
 					}
 					catch {
