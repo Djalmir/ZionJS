@@ -172,16 +172,33 @@ const ZION = (self, zion_component) => {
 	eventDirectives.map((eDirective) => {
 		let elements = Array.from(view.querySelectorAll(`[${ eDirective }]`))
 		elements.map((el) => {
-			let method = el.getAttribute(eDirective).replaceAll('this', 'self')
-			let params = method.match(/\(.+?\)/g)
-			if (params) {
-				method = method.replace(params, '')
-				params = params[0].replace(/[\(\)]/g, '').replace(/^[`"']/g, '').replace(/[`"']$/g, '')
-				//The line below would look like: el.onclick = someMethod
-				el[`${ eDirective.replace(/z-/gi, '') }`] = () => self[method](params)
+			try {
+				let method = el.getAttribute(eDirective).replaceAll('this', 'self')
+				let params = method.match(/\(.+?\)/g)
+				if (params) {
+					method = method.replace(params, '')
+					params = params[0].replace(/[\(\)]/g, '').replace(/[`"']/g, '')
+					if (params.includes(','))
+						params = params.split(',')
+					//The line below would look like: el.onclick = someMethod
+					el[`${ eDirective.replace(/z-/gi, '') }`] = () => {
+						if (self[method])
+							return self[method](params)
+						else
+							return this[method](params)
+					}
+				}
+				else {
+					if (self[method])
+						el[`${ eDirective.replace(/z-/gi, '') }`] = self[method]
+					else if (this[method])
+						el[`${ eDirective.replace(/z-/gi, '') }`] = this[method]
+					else
+						el[`${ eDirective.replace(/z-/gi, '') }`] = eval(method)
+				}
 			}
-			else {
-				el[`${ eDirective.replace(/z-/gi, '') }`] = self[method] || eval(method)
+			catch {
+				throw new ReferenceError(`ZionJS could not resolve ${ eDirective }`)
 			}
 		})
 	})

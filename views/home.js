@@ -241,7 +241,8 @@ template.innerHTML = /*html*/`
 			<p>{{2 * 2}} ihaa</p>
 			<p>aueee {{1 + 1 == 1 ? 'kkk' : 'lol'}}</p>
 		</div>
-		<button z-onclick="showMessage('Hello world!')">showMessage('Hello world!')</button>
+		<button z-onclick="showMessage('Hello world!','Almost done!')">showMessage('Hello world!')</button>
+		<button z-onclick="teste">TESTE</button>
 	</section>
 
 	<section>
@@ -391,10 +392,6 @@ export default class Home extends HTMLElement {
 
 		this.showItems = () => {
 			console.log(this.showingItems)
-		}
-
-		this.showMessage = (msg) => {
-			alert(msg)
 		}
 
 		this.calc = (calcule) => {
