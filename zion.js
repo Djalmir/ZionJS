@@ -270,7 +270,7 @@ const ZION = (self, zion_component) => {
 
 			let currVal = scope[prop]
 			//Set the property getter and setter
-			let oldProp = Object.getOwnPropertyDescriptor(scope, prop)
+			let oldProp = Object.getOwnPropertyDescriptor(scope, prop) || {}
 			Object.defineProperty(scope, prop, {
 				configurable: true,
 				get: () => {
@@ -321,7 +321,7 @@ const ZION = (self, zion_component) => {
 			else
 				scope = self
 			watchKeys[watchKey] = scope[prop]
-			let oldProp = Object.getOwnPropertyDescriptor(scope, prop)
+			let oldProp = Object.getOwnPropertyDescriptor(scope, prop) || {}
 			Object.defineProperty(scope, prop, {
 				configurable: true,
 				get: () => {
@@ -364,7 +364,7 @@ const ZION = (self, zion_component) => {
 			}
 
 			let currVal = self[zIf]
-			let oldProp = Object.getOwnPropertyDescriptor(scope, prop)
+			let oldProp = Object.getOwnPropertyDescriptor(scope, prop) || {}
 			Object.defineProperty(scope, prop, {
 				configurable: true,
 				get: () => {
@@ -526,7 +526,7 @@ const ZION = (self, zion_component) => {
 				else
 					currVal = scope[zIf]
 
-				let oldProp = Object.getOwnPropertyDescriptor(scope, zIf)
+				let oldProp = Object.getOwnPropertyDescriptor(scope, zIf) || {}
 				Object.defineProperty(scope, zIf, {
 					configurable: true,
 					get: () => {
