@@ -1,4 +1,4 @@
-const ZION = (self, zion_component) => {
+const ZION = async(self, zion_component) => {
 
 	const view = zion_component ? zion_component : self.shadowRoot
 	const watch = self['watch'] || {}
@@ -11,6 +11,7 @@ const ZION = (self, zion_component) => {
 		'z-oncopy',
 		'z-ondblclick',
 		'z-onfocus',
+		'z-oninput',
 		'z-onkeydown',
 		'z-onkeypress',
 		'z-onkeyup',
@@ -223,20 +224,25 @@ const ZION = (self, zion_component) => {
 
 		prop = prop.split('[')[0]
 
+		//if el is an zion component
+		if (el.getAttribute('type') && el.shadowRoot)
+			el = el.shadowRoot.querySelector(`[type=${ el.getAttribute('type') }]`)
+
 		try {
 			//fills the element with the property value once the view is loaded
-			if (!el.type)
+			if (!el.getAttribute('type')) {
 				el.textContent = propIndex ? scope[prop][propIndex] : scope[prop]
-			else if (el.type != 'radio' && el.type != 'checkbox') {
+			}
+			else if (el.getAttribute('type') != 'radio' && el.getAttribute('type') != 'checkbox') {
 				el.value = propIndex ? scope[prop][propIndex] : scope[prop]
 			}
-			else if (el.type == 'radio' || el.type == 'checkbox')
+			else if (el.getAttribute('type') == 'radio' || el.getAttribute('type') == 'checkbox')
 				el.checked = propIndex ? scope[prop][propIndex] == eval(el.value) : scope[prop] == eval(el.value)
 
 			if (el.getAttribute('readonly') == null) {
 				//update property on input key up event
 				el.addEventListener('keyup', () => {
-					if (el.type == 'radio' || el.type == 'checkbox') {
+					if (el.getAttribute('type') == 'radio' || el.getAttribute('type') == 'checkbox') {
 						try {
 							if (typeof el.value === 'undefined' || eval(el.value) != undefined)
 								scope[prop] = eval(el.value)
@@ -252,7 +258,7 @@ const ZION = (self, zion_component) => {
 				})
 				//update property on change
 				el.addEventListener('change', () => {
-					if (el.type == 'radio' || el.type == 'checkbox') {
+					if (el.getAttribute('type') == 'radio' || el.getAttribute('type') == 'checkbox') {
 						try {
 							if (typeof el.value === 'undefined' || eval(el.value) != undefined)
 								scope[prop] = eval(el.value)
@@ -292,12 +298,12 @@ const ZION = (self, zion_component) => {
 						let zElements = elements.filter(e => e.getAttribute('z-model') == el.getAttribute('z-model'))
 						//Once the property receives a new value, update all elements binded to it
 						zElements.map((zEl) => {
-							if (!zEl.type)
+							if (!zEl.getAttribute('type'))
 								zEl.textContent = newVal
-							else if (zEl.type != 'radio' && zEl.type != 'checkbox') {
+							else if (zEl.getAttribute('type') != 'radio' && zEl.getAttribute('type') != 'checkbox') {
 								zEl.value = newVal
 							}
-							else if (zEl.type == 'radio' || zEl.type == 'checkbox')
+							else if (zEl.getAttribute('type') == 'radio' || zEl.getAttribute('type') == 'checkbox')
 								zEl.checked = eval(newVal) == eval(zEl.value)
 						})
 					}
@@ -328,11 +334,7 @@ const ZION = (self, zion_component) => {
 					return watchKeys[watchKey]
 				},
 				set: (newVal) => {
-					if (watchKeys[watchKey])
-						watchKeys[watchKey] = newVal
-					else {
-						watchKeys[watchKey] = newVal
-					}
+					watchKeys[watchKey] = newVal
 					watch[watchKey]()
 					if (oldProp.set) {
 						if (typeof newVal === 'undefined' && eval(newVal) != undefined)

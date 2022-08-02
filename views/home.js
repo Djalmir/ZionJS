@@ -243,6 +243,7 @@ template.innerHTML = /*html*/`
 		</div>
 		<button z-onclick="showMessage('Hello world!','Almost done!')">showMessage('Hello world!')</button>
 		<button z-onclick="teste">TESTE</button>
+		<button z-onclick="calc(100/4)">Calcula 100/4</button>
 	</section>
 
 	<section>
