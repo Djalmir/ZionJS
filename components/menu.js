@@ -22,7 +22,7 @@ template.innerHTML = /*html*/`
 	}
 
 	li {
-		color: #09f;
+		color: var(--light-blue);
 		cursor: pointer;
 		font-weight: bold;
 	}

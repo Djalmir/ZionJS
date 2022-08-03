@@ -1,4 +1,4 @@
-const ZION = async(self, zion_component) => {
+const ZION = async (self, zion_component) => {
 
 	const view = zion_component ? zion_component : self.shadowRoot
 	const watch = self['watch'] || {}
@@ -31,10 +31,36 @@ const ZION = async(self, zion_component) => {
 	//Proccess all curly-brackets match
 	let matches = view.innerHTML.match(/({{.+?}})/g)
 	if (matches) {
-		matches.map((match) => {
+		matches.map((match, idx) => {
 			try {
-				if (self[match.replace(/[{}]/g, '')])
-					view.innerHTML = view.innerHTML.replace(match, self[match.replace(/[{}]/g, '')])
+				let foundKey, zionComp
+				Array.from(Object.keys(self)).find((key) => {
+					if (match.match(key)) {
+						foundKey = key
+						zionComp = document.createElement('zion-comp')
+						zionComp.id = `zionComp_${ idx }`
+					}
+				})
+
+				if (self[match.replace(/[{}]/g, '')]) {
+					zionComp.setAttribute('z-model', match.replace(/[{}]/g, ''))
+					view.innerHTML = view.innerHTML.replace(match, zionComp.outerHTML)
+				}
+				else if (foundKey) {
+					zionComp.textContent = eval(match.replace(foundKey, `self.${ foundKey }`).replace(/[{}]/g, ''))
+					view.innerHTML = view.innerHTML.replace(match, zionComp.outerHTML)
+					let currVal = self[foundKey]
+					Object.defineProperty(self, foundKey, {
+						configurable: true,
+						get: () => {
+							return currVal
+						},
+						set: (newValue) => {
+							currVal = newValue
+							view.getElementById(`zionComp_${ idx }`).textContent = eval(match.replace(foundKey, `self.${ foundKey }`).replace(/[{}]/g, ''))
+						}
+					})
+				}
 				else {
 					let result = eval(match.replace(/[{}]/g, ''))
 					if (result)
@@ -224,14 +250,26 @@ const ZION = async(self, zion_component) => {
 
 		prop = prop.split('[')[0]
 
-		//if el is an zion component
-		if (el.getAttribute('type') && el.shadowRoot)
-			el = el.shadowRoot.querySelector(`[type=${ el.getAttribute('type') }]`)
+		//if el is a zion component
+		let elZmodel //used to remember the z-model until we set the getters and setters
+		if (el.getAttribute('type') && el.shadowRoot) {
+			if (el.shadowRoot.querySelector(`[type=${ el.getAttribute('type') }]`)) {
+				elZmodel = el.getAttribute('z-model')
+				el = el.shadowRoot.querySelector(`[type=${ el.getAttribute('type') }]`)
+			}
+		}
+		else if (el.getAttribute('zTag')) {
+			elZmodel = el.getAttribute('z-model')
+			el = el.shadowRoot.querySelector(el.getAttribute('zTag'))
+		}
 
 		try {
 			//fills the element with the property value once the view is loaded
 			if (!el.getAttribute('type')) {
-				el.textContent = propIndex ? scope[prop][propIndex] : scope[prop]
+				if ('value' in el)
+					el.value = propIndex ? scope[prop][propIndex] : scope[prop]
+				else
+					el.textContent = propIndex ? scope[prop][propIndex] : scope[prop]
 			}
 			else if (el.getAttribute('type') != 'radio' && el.getAttribute('type') != 'checkbox') {
 				el.value = propIndex ? scope[prop][propIndex] : scope[prop]
@@ -295,16 +333,34 @@ const ZION = async(self, zion_component) => {
 								oldProp.set(newVal)
 						}
 
-						let zElements = elements.filter(e => e.getAttribute('z-model') == el.getAttribute('z-model'))
+						let zElements = elements.filter(e => e.getAttribute('z-model') == el.getAttribute('z-model') || (elZmodel && e.getAttribute('z-model') == elZmodel))
 						//Once the property receives a new value, update all elements binded to it
 						zElements.map((zEl) => {
-							if (!zEl.getAttribute('type'))
-								zEl.textContent = newVal
+
+							//if zEl is a zion component
+							if (zEl.getAttribute('type') && zEl.shadowRoot) {
+								if (zEl.shadowRoot.querySelector(`[type=${ zEl.getAttribute('type') }]`))
+									zEl = zEl.shadowRoot.querySelector(`[type=${ zEl.getAttribute('type') }]`)
+							}
+							else if (zEl.getAttribute('zTag'))
+								zEl = zEl.shadowRoot.querySelector(zEl.getAttribute('zTag'))
+
+							if (!zEl.getAttribute('type')) {
+								if ('value' in zEl)
+									zEl.value = newVal
+								else
+									zEl.textContent = newVal
+							}
 							else if (zEl.getAttribute('type') != 'radio' && zEl.getAttribute('type') != 'checkbox') {
 								zEl.value = newVal
 							}
 							else if (zEl.getAttribute('type') == 'radio' || zEl.getAttribute('type') == 'checkbox')
 								zEl.checked = eval(newVal) == eval(zEl.value)
+
+							//Sending event to components so they are able to make custom changes to itself
+							//See Taskboard components/textInput.js
+							let event = new CustomEvent('updated', {detail: {component: zEl, newValue: newVal}})
+							document.dispatchEvent(event)
 						})
 					}
 				}

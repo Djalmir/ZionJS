@@ -136,6 +136,9 @@ template.innerHTML = /*html*/`
 	<!-- <link rel="stylesheet" href="style.css"> -->
 	<h1 style="text-align:center;">ZionJS</h1>
 	<h2>{{mainMessage}}</h2>
+	<section>
+		<b><span style="color:var(--light-blue);">Altere a app.mainMessage e verá o seguinte texto alterar também:</span> {{mainMessage=='Hello world!'?'Olá mundo lindo!':'Mudaram a msg principal!'}}</b>
+	</section>
 	<button z-if="positionFixedzIfTest" id="testBt">teste</button>
   <section style="display:flex;align-items: flex-end; gap: 13px;">
 		<!-- Testing Two way data binding and method calls on events  -->
@@ -303,9 +306,9 @@ export default class Home extends HTMLElement {
 			{name: 'poiu', description: 'lol'},
 		]
 		this.items2 = [
-			{name: 'Vue', description: 'Pra que? rsrs'},
-			{name: 'React', description: 'Coitado kkk'},
-			{name: 'Angular', description: 'pff 🤣'}
+			{name: 'Quase um VueJs hein?!', description: 'SQN! rsrs'},
+			{name: 'Tamo indo', description: 'Devagar e sempre'},
+			{name: 'Reajindo às views angulares da vida..', description: '🤣'}
 		]
 		this.showingItems = this.items1
 		this.boxes = [
