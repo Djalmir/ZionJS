@@ -1,4 +1,4 @@
-const ZION = async (self, zion_component) => {
+const ZION = async (self, zion_component, refreshing) => {
 
 	const view = zion_component ? zion_component : self.shadowRoot
 	const watch = self['watch'] || {}
@@ -134,7 +134,20 @@ const ZION = async (self, zion_component) => {
 							let matches = html.match(/({{.+?}})/g)
 							if (matches)
 								matches.map((match) => {
-									html = html.replaceAll(match, z[match.replace(/[{}]/g, '').split('.')[1]])
+									// console.log('nick', nick, 'z', z, 'match', match)
+									// console.log(match.replace(/[{}]/g, ''))
+									// console.log('__________________________________')
+									if (match.replace(/[{}]/g, '') == nick)
+										html = html.replaceAll(match, typeof (z) == 'object' ? JSON.stringify(z) : z)
+									else {
+										let property = match.replace(/[{}]/g, '').split('.')
+										property.shift()
+										let obj = 'z'
+										for (let i = 0; i < property.length; i++) {
+											obj += `['${ property[i] }']`
+										}
+										html = html.replaceAll(match, eval(obj))
+									}
 								})
 
 							html = html.replaceAll(`${ nick }.`, `${ array }[${ idx }].`)
@@ -162,7 +175,7 @@ const ZION = async (self, zion_component) => {
 				}
 
 				if (newVal) {
-					ZION(self, zEl.parentElement)
+					ZION(self, zEl.parentElement, true)
 				}
 				else {
 					zEl.setAttribute('end-z-for', zEl.getAttribute('data_id'))
@@ -371,7 +384,7 @@ const ZION = async (self, zion_component) => {
 		}
 	})
 
-	if (!zion_component) {
+	if (!refreshing) {
 		let watchKeys = {}
 		//Set the watch function to all keys
 		Object.keys(watch).map((watchKey) => {

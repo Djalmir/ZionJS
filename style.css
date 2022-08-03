@@ -53,7 +53,7 @@ h1 {
 	font-size: 2em;
 }
 
-input {
+input, textarea {
 	color: var(--dark-font1);
 	background: var(--dark-bg3);
 	padding: 4px 8px;

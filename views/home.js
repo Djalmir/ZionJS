@@ -209,6 +209,10 @@ template.innerHTML = /*html*/`
 				<b z-model="item.name" z-if="item.name != 'poiu'" enter-animation="rollIn 1s linear" leave-animation="rollOut .8s linear"></b>
 				<p>{{item.description}}</p>
 				<input type="text" z-model="item.name">
+				<br>
+				<textarea disabled style="margin-top: 7px; height: 170px; resize: none;">
+					{{item}}
+				</textarea>
 			</li>
 		</ul>
 		<button z-onclick="showItems">Exibe Itens</button>
@@ -253,6 +257,14 @@ template.innerHTML = /*html*/`
 		<fragment z-for="item in items1">
 			<p>{{item.name}}</p>
 		</fragment>
+	</section>
+
+	<section>
+		<ol style="margin-left: 17px;" type="A">
+			<li z-for="person in people">
+				{{person.name.firstName}} {{person.name.lastName}}
+			</li>
+		</ol>
 	</section>
 `
 export default class Home extends HTMLElement {
@@ -384,6 +396,20 @@ export default class Home extends HTMLElement {
 						]
 					}
 				]
+			}
+		]
+		this.people = [
+			{
+				name: {
+					firstName: 'Djalmir',
+					lastName: 'Miodutzki'
+				}
+			},
+			{
+				name: {
+					firstName: 'Hosama',
+					lastName: 'Oliveira'
+				}
 			}
 		]
 		/* ******* */
