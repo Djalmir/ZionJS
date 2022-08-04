@@ -117,8 +117,16 @@ const ZION = async (self, zion_component, refreshing) => {
 						startZfor = document.createComment(zEl.outerHTML)
 					parent.insertBefore(startZfor, zEl)
 
+					// z-for="x in 100"
+					let numbersArray
+					numbersArray = Array.from({length: Number(array[0])}, (_, i) => i)
+
 					try {
-						eval('self.' + array).map((z, idx) => {
+						let arr = numbersArray.length
+							? numbersArray/*z-for="x in 100"*/
+							: eval('self.' + array)/*z-for="x in someArray"*/
+
+						arr.map((z, idx) => {
 							let newEl = parent.insertBefore(document.createElement(zEl.tagName), zEl)
 							Array.from(zEl.attributes).filter(at => at.nodeName != 'z-for').map((attr) => {
 								newEl.setAttribute(attr.nodeName, attr.nodeValue)
@@ -131,22 +139,25 @@ const ZION = async (self, zion_component, refreshing) => {
 
 							let html = zEl.innerHTML
 
-							let matches = html.match(/({{.+?}})/g)
+							let matches = html.match(/{{.+?}}/g)
 							if (matches)
 								matches.map((match) => {
-									// console.log('nick', nick, 'z', z, 'match', match)
-									// console.log(match.replace(/[{}]/g, ''))
-									// console.log('__________________________________')
 									if (match.replace(/[{}]/g, '') == nick)
 										html = html.replaceAll(match, typeof (z) == 'object' ? JSON.stringify(z) : z)
 									else {
 										let property = match.replace(/[{}]/g, '').split('.')
-										property.shift()
-										let obj = 'z'
-										for (let i = 0; i < property.length; i++) {
-											obj += `['${ property[i] }']`
+										let shifted = property.shift()
+										if (shifted == nick) {
+											let obj = 'z'
+											for (let i = 0; i < property.length; i++) {
+												obj += `['${ property[i] }']`
+											}
+											html = html.replaceAll(match, eval(obj))
 										}
-										html = html.replaceAll(match, eval(obj))
+										else {
+											let m = match.replace(nick, z)
+											html = html.replace(match, m)
+										}
 									}
 								})
 
@@ -156,6 +167,16 @@ const ZION = async (self, zion_component, refreshing) => {
 							if (matches) {
 								matches.map((match) => {
 									html = html.replaceAll(match, match.replace(`${ nick }`, `${ array }[${ idx }]`))
+								})
+							}
+
+							let evalMatches = html.match(/{{.+?}}/g)
+							if (evalMatches) {
+								evalMatches.map((match) => {
+									try {
+										html = html.replace(match, eval(match.replace(/[{}]/g, '')))
+									}
+									catch {}
 								})
 							}
 
@@ -170,7 +191,6 @@ const ZION = async (self, zion_component, refreshing) => {
 						})
 					}
 					catch {
-						//
 					}
 				}
 
@@ -186,24 +206,26 @@ const ZION = async (self, zion_component, refreshing) => {
 			updateList()
 
 			//Z-FOR TWO WAY DATA BINDING
-			array = array[0].split('.')
-			try {
-				let scope = eval(`self${ array.length > 1 ? '.' + array.slice(0, array.length - 2) : '' }`)
-				let prop = array[array.length - 1]
-				let currVal = scope[prop]
-				Object.defineProperty(scope, prop, {
-					configurable: true,
-					get: () => {
-						return currVal
-					},
-					set: (newVal) => {
-						currVal = newVal
-						updateList(newVal)
-					}
-				})
-			}
-			catch (err) {
-				//
+			if (self[array[0]]) {
+				array = array[0].split('.')
+				try {
+					let scope = eval(`self${ array.length > 1 ? '.' + array.slice(0, array.length - 2) : '' }`)
+					let prop = array[array.length - 1]
+					let currVal = scope[prop]
+					Object.defineProperty(scope, prop, {
+						configurable: true,
+						get: () => {
+							return currVal
+						},
+						set: (newVal) => {
+							currVal = newVal
+							updateList(newVal)
+						}
+					})
+				}
+				catch (err) {
+					//
+				}
 			}
 		})
 	}

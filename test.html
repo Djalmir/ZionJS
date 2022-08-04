@@ -11,40 +11,130 @@
 			body {
 				background: #202020;
 				color: #eee;
+				font-family: 'Fira Code', sans-serif;
+				font-size: 14px;
+			}
+
+			h1 {
+				min-height: 100px;
+				margin: 0;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: flex-end;
+				gap: 17px;
+			}
+
+			#titleLength {
+				margin: 7px 0 13px;
+				text-align: center;
+			}
+
+			ol {
+				margin: 17px auto;
+				padding: 17px;
+				padding-left: 34px;
+				border: 2px dashed #777;
+				width: fit-content;
+			}
+
+			#ulzera {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 30px;
+				padding: 13px;
+				justify-content: space-evenly;
+			}
+
+			#radioGroup {
+				border: 5px double #777;
+				width: fit-content;
+				padding: 7px;
+				margin-top: 35px;
+			}
+
+			#timesTable {
+				display: flex;
+				align-items: center;
+				justify-content: space-evenly;
+				gap: 33px;
+				flex-wrap: wrap;
+				border: 10px double #777;
+				background: #101010;
+				padding: 7px;
+				box-sizing: border-box;
+				transform-origin: top left;
+			}
+
+			@keyframes enter {
+				from {
+					opacity: 0;
+					transform: scale(0);
+				}
+
+				to {
+					opacity: 1;
+				}
+			}
+
+			@keyframes leave {
+				to {
+					opacity: 0;
+					transform: scale(0);
+				}
 			}
 		</style>
 	</head>
 
 	<body>
+
 		<div id="app">
-			<h1>{{foo}}</h1>
+			<h1>
+				{{title}}
+				<input type="text" placeholder="Altere o título da página" z-model="title">
+			</h1>
+			<p id="titleLength">Title length: <b z-model="titleLength"></b> </p>
 
-			<p>{{2*5}}!</p>
-
-			<ul>
+			<ul id="ulzera">
 				<li z-for="item in items">
-					{{item}}
+					<p z-for="x in 2">
+						Exibindo <b>{{item}}</b> pela {{x+1}}ª vez
+					</p>
 				</li>
 			</ul>
 
-			<ol style="margin-left: 17px;" type="A">
+			<ol type="A">
 				<li z-for="person in people">
 					{{person.name.firstName}} {{person.name.lastName}}
 				</li>
 			</ol>
 
-			<p>Com let tbm funciona: {{ex}}</p>
-			<p>Porem se tentar usar z-model com let, não funciona: <span z-model="ex"></span></p>
+			<b>Um {{lorem}} na sua telinha!</b><br>
+			<span>Tbm dá pra fazer <u z-model="lorem"></u> assim!</span>
 
+			<div id="radioGroup">
+				<input type="radio" value="true" id="show" z-model="showTimesTable">
+				<label for="show">Exibir Tabuada</label>
+				<input type="radio" value="false" id="dontShow" z-model="showTimesTable">
+				<label for="dontShow">Esconder Tabuada</label>
+			</div>
+
+			<div id="timesTable" z-if="showTimesTable" enter-animation="enter .5s ease-out" leave-animation="leave .4s ease-in">
+				<div z-for="i in 10">
+					<p z-for="o in 11">
+						{{i+1}} x {{o}} = {{(i+1)*o}}
+					</p>
+				</div>
+			</div>
 		</div>
 
-
+		<!-- <script src="https://cdn.jsdelivr.net/gh/Djalmir/ZionJS@latest/zion.js"></script> -->
 		<script src="zion.js"></script>
 		<script>
-
-			this.foo = 'Hello!'
-			var items = ['item 1', 'item 2', 'item 3', 'item 4', 'item 5']
-			const people = [
+			this.title = 'Welcome to ZionJS!'
+			this.titleLength = this.title.length
+			this.items = ['lorem', 'ipsum', 'dolor', 'sit', 'ammet']
+			this.people = [
 				{
 					name: {
 						firstName: 'Djalmir',
@@ -53,17 +143,28 @@
 				},
 				{
 					name: {
-						firstName: 'Hosama',
-						lastName: 'Oliveira'
+						firstName: 'Joe',
+						lastName: 'Doe'
+					}
+				},
+				{
+					name: {
+						firstName: 'Fulano',
+						lastName: 'Silva'
 					}
 				}
 			]
+			this.lorem = 'Lorem ipsum da horinha'
+			this.showTimesTable = true
 
-			let ex = 'Lorem ipsum'
+			this.watch = {
+				title: () => {
+					this.titleLength = this.title.length
+				}
+			}
 
 			ZION(this, app)
 		</script>
-
 	</body>
 
 </html>
