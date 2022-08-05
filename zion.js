@@ -100,6 +100,20 @@ const ZION = async (self, zion_component, refreshing) => {
 					}
 					zEl.removeAttribute('end-z-for')
 					zEl.style.display = ''
+					let child = Array.from(zEl.querySelectorAll('[end-z-for]')).reverse()[0]
+					while (child) {
+						let children = Array.from(zEl.querySelectorAll(`[data_id='${ child.getAttribute('data_id') }']`)).filter(c => c != child)
+						children.map((c) => {
+							c.parentElement.removeChild(c)
+						})
+						let comments = Array.from(zEl.childNodes).filter(node => node.nodeType == 8 && node.textContent.includes(child.getAttribute('data_id')))
+						comments.map((c) => {
+							c.parentElement.removeChild(c)
+						})
+						child.removeAttribute('end-z-for')
+						child.style.display = ''
+						child = Array.from(zEl.querySelectorAll('[end-z-for]')).reverse()[0]
+					}
 				}
 				else {
 					arr = zEl.getAttribute('z-for').split(' in ').map((z => z.trim()))
@@ -144,10 +158,10 @@ const ZION = async (self, zion_component, refreshing) => {
 								matches.map((match) => {
 									if (match.replace(/[{}]/g, '') == nick)
 										html = html.replaceAll(match, typeof (z) == 'object' ? JSON.stringify(z) : z)
-									else {
+									else if (!zEl.parentElement.getAttribute('end-z-for')) {
 										let property = match.replace(/[{}]/g, '').split('.')
 										let shifted = property.shift()
-										if (shifted == nick) {
+										if (shifted == zEl.nick) {
 											let obj = 'z'
 											for (let i = 0; i < property.length; i++) {
 												obj += `['${ property[i] }']`
@@ -155,7 +169,7 @@ const ZION = async (self, zion_component, refreshing) => {
 											html = html.replaceAll(match, eval(obj))
 										}
 										else {
-											let m = match.replace(nick, z)
+											let m = match.replace(zEl.nick, z)
 											html = html.replace(match, m)
 										}
 									}

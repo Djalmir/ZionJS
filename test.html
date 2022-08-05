@@ -97,9 +97,10 @@
 
 			<ul id="ulzera">
 				<li z-for="item in items">
-					<p z-for="x in 2">
-						Exibindo <b>{{item}}</b> pela {{x+1}}ª vez
-					</p>
+					<div z-for="i in 2">
+						Exibindo <b>{{item}}</b> pela {{i+1}}ª vez
+						<b z-for="o in 3">({{(o+1)*(i+2)}})</b>
+					</div>
 				</li>
 			</ul>
 
@@ -128,8 +129,8 @@
 			</div>
 		</div>
 
-		<!-- <script src="https://cdn.jsdelivr.net/gh/Djalmir/ZionJS@latest/zion.js"></script> -->
-		<script src="zion.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/Djalmir/ZionJS/zion.js"></script>
+		<!-- <script src="zion.js"></script> -->
 		<script>
 			this.title = 'Welcome to ZionJS!'
 			this.titleLength = this.title.length
