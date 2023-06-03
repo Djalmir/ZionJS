@@ -114,10 +114,8 @@
 			<span>Tbm dá pra fazer <u z-model="lorem"></u> assim!</span>
 
 			<div id="radioGroup">
-				<input type="radio" value="true" id="show" z-model="showTimesTable">
-				<label for="show">Exibir Tabuada</label>
-				<input type="radio" value="false" id="dontShow" z-model="showTimesTable">
-				<label for="dontShow">Esconder Tabuada</label>
+				<label><input type="radio" value="true" id="show" z-model="showTimesTable"> Exibir Tabuada</label>
+				<label><input type="radio" value="false" id="dontShow" z-model="showTimesTable"> Esconder Tabuada</label>
 			</div>
 
 			<div id="timesTable" z-if="showTimesTable" enter-animation="enter .5s ease-out" leave-animation="leave .4s ease-in">

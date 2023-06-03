@@ -15,7 +15,7 @@ style.textContent = /*css*/`
 		align-items: flex-start;
 	}
 
-	#testBt {
+	.testBt {
 		position: fixed;
 		top: 10px;
 		left: 10px;
@@ -139,7 +139,7 @@ template.innerHTML = /*html*/`
 	<section>
 		<b><span style="color:var(--light-blue);">Altere a app.mainMessage e verá o seguinte texto alterar também:</span> {{mainMessage=='Hello world!'?'Olá mundo lindo!':'Mudaram a msg principal!'}}</b>
 	</section>
-	<button z-if="positionFixedzIfTest" id="testBt">teste</button>
+	<button z-if="fixedPositionTest" class="testBt">teste</button>
   <section style="display:flex;align-items: flex-end; gap: 13px;">
 		<!-- Testing Two way data binding and method calls on events  -->
 		<label>
@@ -156,7 +156,7 @@ template.innerHTML = /*html*/`
 
 	<section style="display: flex; gap: 30px; align-items: center;">
 		 <!-- Testing conditional rendering  -->
-		<label z-if="!test">
+		<label z-if="test">
 			<span>app.test = false</span><br/>
 			<input type="text" z-model="showImage1" readonly>
 		</label>
@@ -249,7 +249,7 @@ template.innerHTML = /*html*/`
 			<p>aueee {{1 + 1 == 1 ? 'kkk' : 'lol'}}</p>
 		</div>
 		<button z-onclick="showMessage('Hello world!','Almost done!')">showMessage('Hello world!')</button>
-		<button z-onclick="teste">TESTE</button>
+		<button z-onclick="test">TESTE</button>
 		<button z-onclick="calc(100/4)">Calcula 100/4</button>
 	</section>
 
@@ -294,10 +294,10 @@ export default class Home extends HTMLElement {
 		/* ******** */
 
 		/* Data */
-		this.positionFixedzIfTest = false
+		this.fixedPositionTest = false
 
 		this.mainMessage = 'Hello world!'
-		this.test = true
+		this.test = false
 		this.user = {
 			name: 'Hosama',
 			age: 28

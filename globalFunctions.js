@@ -4,6 +4,6 @@ function showMessage(msg) {
 	})
 }
 
-function teste(){
-	alert('aoooba')
+function test(){
+	alert('Testando...')
 }

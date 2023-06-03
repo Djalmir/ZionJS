@@ -44,6 +44,7 @@ template.innerHTML = /*html*/`
 			<fragment z-model="label"></fragment>
 		</p>
 
+		<br/>
 		<p>fim</p>
 
 	</section>

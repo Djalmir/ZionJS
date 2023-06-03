@@ -133,7 +133,7 @@ const ZION = async (self, zion_component, refreshing) => {
 
 					// z-for="x in 100"
 					let numbersArray
-					numbersArray = Array.from({length: Number(array[0])}, (_, i) => i)
+					numbersArray = Array.from({ length: Number(array[0]) }, (_, i) => i)
 
 					try {
 						let arr = numbersArray.length
@@ -408,7 +408,7 @@ const ZION = async (self, zion_component, refreshing) => {
 
 							//Sending event to components so they are able to make custom changes to itself
 							//See Taskboard components/textInput.js
-							let event = new CustomEvent('updated', {detail: {component: zEl, newValue: newVal}})
+							let event = new CustomEvent('updated', { detail: { component: zEl, newValue: newVal } })
 							document.dispatchEvent(event)
 						})
 					}
@@ -420,9 +420,9 @@ const ZION = async (self, zion_component, refreshing) => {
 		}
 	})
 
+	//Set the watch function to all keys
 	if (!refreshing) {
 		let watchKeys = {}
-		//Set the watch function to all keys
 		Object.keys(watch).map((watchKey) => {
 			let arr = watchKey.split('.')
 			let prop = arr[arr.length - 1]
@@ -453,7 +453,9 @@ const ZION = async (self, zion_component, refreshing) => {
 	}
 
 	//Proccess all z-if directives
-	let zIfElements = Array.from(view.querySelectorAll('[z-if]')).filter(el => !el.hasAttribute('end-z-for')).filter(e => e.offsetParent != null)
+	let zIfElements = Array.from(view.querySelectorAll('[z-if]')).filter((el) => {
+		return !el.hasAttribute('end-z-for') && (el.offsetParent != null || window.getComputedStyle(el).getPropertyValue('position') == 'fixed')
+	})
 	zIfElements.map((zEl) => {
 		let zIf = zEl.getAttribute('z-if')
 		if (typeof self[zIf] !== 'undefined') {
@@ -764,7 +766,7 @@ const ZION = async (self, zion_component, refreshing) => {
 }
 
 const zGet = async (url, headers) => {
-	let event = new CustomEvent('zBeforeRequest', {detail: {url: url, headers: headers}})
+	let event = new CustomEvent('zBeforeRequest', { detail: { url: url, headers: headers } })
 	document.dispatchEvent(event)
 	return new Promise((result, rej) => {
 		fetch(url, {
@@ -786,14 +788,14 @@ const zGet = async (url, headers) => {
 				else {
 					result(res)
 				}
-				let event = new CustomEvent('zAfterRequest', {detail: {res: res}})
+				let event = new CustomEvent('zAfterRequest', { detail: { res: res } })
 				document.dispatchEvent(event)
 			})
 	})
 }
 
 const zPost = async (url, body, headers) => {
-	let event = new CustomEvent('zBeforeRequest', {detail: {url: url, body: body, headers: headers}})
+	let event = new CustomEvent('zBeforeRequest', { detail: { url: url, body: body, headers: headers } })
 	document.dispatchEvent(event)
 	return new Promise((result, rej) => {
 		fetch(url, {
@@ -816,14 +818,14 @@ const zPost = async (url, body, headers) => {
 				else {
 					result(res)
 				}
-				let event = new CustomEvent('zAfterRequest', {detail: {res: res}})
+				let event = new CustomEvent('zAfterRequest', { detail: { res: res } })
 				document.dispatchEvent(event)
 			})
 	})
 }
 
 const zPut = async (url, body, headers) => {
-	let event = new CustomEvent('zBeforeRequest', {detail: {url: url, body: body, headers: headers}})
+	let event = new CustomEvent('zBeforeRequest', { detail: { url: url, body: body, headers: headers } })
 	document.dispatchEvent(event)
 	return new Promise((result, rej) => {
 		fetch(url, {
@@ -846,14 +848,14 @@ const zPut = async (url, body, headers) => {
 				else {
 					result(res)
 				}
-				let event = new CustomEvent('zAfterRequest', {detail: {res: res}})
+				let event = new CustomEvent('zAfterRequest', { detail: { res: res } })
 				document.dispatchEvent(event)
 			})
 	})
 }
 
 const zDelete = async (url, headers) => {
-	let event = new CustomEvent('zBeforeRequest', {detail: {url: url, headers: headers}})
+	let event = new CustomEvent('zBeforeRequest', { detail: { url: url, headers: headers } })
 	document.dispatchEvent(event)
 	return new Promise((result, rej) => {
 		fetch(url, {
@@ -875,7 +877,7 @@ const zDelete = async (url, headers) => {
 				else {
 					result(res)
 				}
-				let event = new CustomEvent('zAfterRequest', {detail: {res: res}})
+				let event = new CustomEvent('zAfterRequest', { detail: { res: res } })
 				document.dispatchEvent(event)
 			})
 	})
