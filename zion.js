@@ -73,7 +73,7 @@ const ZION = async (self, zion_component, refreshing) => {
 
 	//Generating and rendering z-for elements
 	let zForElements
-	while (Array.from(view.querySelectorAll("[z-for]")).filter(z => !z.hasAttribute('end-z-for')).filter(e => e.offsetParent != 'null').length) {
+	while (Array.from(view.querySelectorAll("[z-for]")).filter(z => !z.hasAttribute('end-z-for')).filter(e => e.offsetParent != null).length) {
 		zForElements = Array.from(view.querySelectorAll("[z-for]")).filter(z => !z.hasAttribute('end-z-for')).filter(e => e.offsetParent != 'null')
 		zForElements.map((zEl) => {
 			if (!zEl.hasAttribute('data_id')) {
@@ -301,10 +301,10 @@ const ZION = async (self, zion_component, refreshing) => {
 
 		//if el is a zion component
 		let elZmodel //used to remember the z-model until we set the getters and setters
-		if (el.getAttribute('type') && el.shadowRoot) {
-			if (el.shadowRoot.querySelector(`[type=${ el.getAttribute('type') }]`)) {
+		if (el.shadowRoot) {
+			if (el.shadowRoot.querySelector(`input[type]`)) {
 				elZmodel = el.getAttribute('z-model')
-				el = el.shadowRoot.querySelector(`[type=${ el.getAttribute('type') }]`)
+				el = el.shadowRoot.querySelector(`input[type]`)
 			}
 		}
 		else if (el.getAttribute('zTag')) {
@@ -323,13 +323,14 @@ const ZION = async (self, zion_component, refreshing) => {
 			else if (el.getAttribute('type') != 'radio' && el.getAttribute('type') != 'checkbox') {
 				el.value = propIndex ? scope[prop][propIndex] : scope[prop]
 			}
-			else if (el.getAttribute('type') == 'radio' || el.getAttribute('type') == 'checkbox')
-				el.checked = propIndex ? scope[prop][propIndex] == eval(el.value) : scope[prop] == eval(el.value)
+			else if (el.getAttribute('type') == 'radio' || el.getAttribute('type') == 'checkbox') {
+				el.checked = propIndex ? scope[prop][propIndex] == eval(el.value) : el.getAttribute('type') == 'radio' ? scope[prop] == eval(el.value) : scope[prop]
+			}
 
 			if (el.getAttribute('readonly') == null) {
 				//update property on input key up event
 				el.addEventListener('keyup', () => {
-					if (el.getAttribute('type') == 'radio' || el.getAttribute('type') == 'checkbox') {
+					if (el.getAttribute('type') == 'radio') {
 						try {
 							if (typeof el.value === 'undefined' || eval(el.value) != undefined)
 								scope[prop] = eval(el.value)
@@ -340,12 +341,23 @@ const ZION = async (self, zion_component, refreshing) => {
 							scope[prop] = el.value
 						}
 					}
+					else if (el.getAttribute('type') == 'checkbox') {
+						try {
+							if (typeof el.checked === 'undefined' || eval(el.checked) != undefined)
+								scope[prop] = eval(el.checked)
+							else
+								scope[prop] = el.checked
+						}
+						catch {
+							scope[prop] = el.checked
+						}
+					}
 					else
 						scope[prop] = el.value
 				})
 				//update property on change
 				el.addEventListener('change', () => {
-					if (el.getAttribute('type') == 'radio' || el.getAttribute('type') == 'checkbox') {
+					if (el.getAttribute('type') == 'radio') {
 						try {
 							if (typeof el.value === 'undefined' || eval(el.value) != undefined)
 								scope[prop] = eval(el.value)
@@ -354,6 +366,17 @@ const ZION = async (self, zion_component, refreshing) => {
 						}
 						catch {
 							scope[prop] = el.value
+						}
+					}
+					else if (el.getAttribute('type') == 'checkbox') {
+						try {
+							if (typeof el.checked === 'undefined' || eval(el.checked) != undefined)
+								scope[prop] = eval(el.checked)
+							else
+								scope[prop] = el.checked
+						}
+						catch {
+							scope[prop] = el.checked
 						}
 					}
 					else
@@ -387,9 +410,9 @@ const ZION = async (self, zion_component, refreshing) => {
 						zElements.map((zEl) => {
 
 							//if zEl is a zion component
-							if (zEl.getAttribute('type') && zEl.shadowRoot) {
-								if (zEl.shadowRoot.querySelector(`[type=${ zEl.getAttribute('type') }]`))
-									zEl = zEl.shadowRoot.querySelector(`[type=${ zEl.getAttribute('type') }]`)
+							if (zEl.shadowRoot) {
+								if (zEl.shadowRoot.querySelector(`input[type]`))
+									zEl = zEl.shadowRoot.querySelector(`input[type]`)
 							}
 							else if (zEl.getAttribute('zTag'))
 								zEl = zEl.shadowRoot.querySelector(zEl.getAttribute('zTag'))
@@ -403,8 +426,11 @@ const ZION = async (self, zion_component, refreshing) => {
 							else if (zEl.getAttribute('type') != 'radio' && zEl.getAttribute('type') != 'checkbox') {
 								zEl.value = newVal
 							}
-							else if (zEl.getAttribute('type') == 'radio' || zEl.getAttribute('type') == 'checkbox')
+							else if (zEl.getAttribute('type') == 'radio')
 								zEl.checked = eval(newVal) == eval(zEl.value)
+							else if (zEl.getAttribute('type') == 'checkbox') {
+								zEl.checked = eval(newVal)
+							}
 
 							//Sending event to components so they are able to make custom changes to itself
 							//See Taskboard components/textInput.js
