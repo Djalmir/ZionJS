@@ -94,7 +94,7 @@ const ZION = async (self, zion_component, refreshing) => {
 					while (!foundEnd) {
 						parent.removeChild(startZfor.nextElementSibling)
 
-						foundEnd = startZfor.nextElementSibling.hasAttribute('end-z-for')
+						foundEnd = startZfor.nextElementSibling?.hasAttribute('end-z-for')
 						if (foundEnd)
 							foundEnd = startZfor.nextElementSibling.getAttribute('end-z-for') == zEl.getAttribute('data_id')
 					}
@@ -323,8 +323,16 @@ const ZION = async (self, zion_component, refreshing) => {
 			else if (el.getAttribute('type') != 'radio' && el.getAttribute('type') != 'checkbox') {
 				el.value = propIndex ? scope[prop][propIndex] : scope[prop]
 			}
-			else if (el.getAttribute('type') == 'radio' || el.getAttribute('type') == 'checkbox') {
-				el.checked = propIndex ? scope[prop][propIndex] == eval(el.value) : el.getAttribute('type') == 'radio' ? scope[prop] == eval(el.value) : scope[prop]
+			else if (el.getAttribute('type') == 'radio') {
+				try {
+					el.checked = propIndex ? scope[prop][propIndex] == eval(el.value) : scope[prop] == eval(el.value)
+				}
+				catch {
+					el.checked = propIndex ? scope[prop][propIndex] == el.value : scope[prop] == el.value
+				}
+			}
+			else if (el.getAttribute('type') == 'checkbox') {
+				el.checked = propIndex ? scope[prop][propIndex] == eval(el.value) : scope[prop]
 			}
 
 			if (el.getAttribute('readonly') == null) {
@@ -426,14 +434,21 @@ const ZION = async (self, zion_component, refreshing) => {
 							else if (zEl.getAttribute('type') != 'radio' && zEl.getAttribute('type') != 'checkbox') {
 								zEl.value = newVal
 							}
-							else if (zEl.getAttribute('type') == 'radio')
-								zEl.checked = eval(newVal) == eval(zEl.value)
+							else if (zEl.getAttribute('type') == 'radio') {
+								try {
+									zEl.checked = eval(newVal) == eval(zEl.value)
+								}
+								catch {
+									zEl.checked = newVal == zEl.value
+								}
+							}
 							else if (zEl.getAttribute('type') == 'checkbox') {
 								zEl.checked = eval(newVal)
 							}
 
 							//Sending event to components so they are able to make custom changes to itself
 							//See Taskboard components/textInput.js
+							//>>> WE CAN SAFELY REMOVE THIS CODE AS SOON AS THE NEW PROJECTS ARE ONLINE, FOR THEY'LL BE USING THE zionComponents (NO zion.js NEEDED)
 							let event = new CustomEvent('updated', { detail: { component: zEl, newValue: newVal } })
 							document.dispatchEvent(event)
 						})
