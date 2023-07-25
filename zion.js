@@ -10,6 +10,7 @@ const ZION = async (self, zion_component, refreshing) => {
 		'z-oncontextmenu',
 		'z-oncopy',
 		'z-ondblclick',
+		'z-onerror',
 		'z-onfocus',
 		'z-oninput',
 		'z-onkeydown',
