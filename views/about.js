@@ -146,7 +146,7 @@ export default class About extends HTMLElement {
 						name: 'Table 1',
 						customers: [
 							{
-								name: 'Penisvaldo',
+								name: 'Mário',
 								orders: [
 									{
 										name: 'Água com gas',
@@ -164,7 +164,7 @@ export default class About extends HTMLElement {
 								]
 							},
 							{
-								name: 'Cremilson',
+								name: 'Denilson',
 								orders: [
 									{
 										name: 'Coca-cola',
@@ -196,7 +196,7 @@ export default class About extends HTMLElement {
 								]
 							},
 							{
-								name: 'Sicrilda',
+								name: 'Cida',
 								orders: [
 									{
 										name: 'X-Tudo'
